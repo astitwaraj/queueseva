@@ -5,14 +5,22 @@ import { useRouter } from 'next/navigation';
 import { doc, onSnapshot, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { Booking, Shop } from '@/lib/firebase/db';
+import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QrCode, ArrowLeft, Loader2, CheckCircle, Clock } from 'lucide-react';
 
 export default function TicketView({ params }: { params: { bookingId: string } }) {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [shop, setShop] = useState<Shop | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/customer/login');
+    }
+  }, [user, authLoading, router]);
 
   // Real-time listener for this specific booking
   useEffect(() => {

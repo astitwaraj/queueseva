@@ -1,17 +1,37 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, ListOrdered, LogOut } from 'lucide-react';
+import { Search, ListOrdered, LogOut, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { logoutUser } from '@/lib/firebase/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function CustomerDashboard() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/customer/login');
+    }
+  }, [user, authLoading, router]);
 
   const handleLogout = async () => {
     await logoutUser();
     router.push('/');
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="animate-spin text-cyan-500" size={32} />
+      </div>
+    );
+  }
+
+  // wait for redirect
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">

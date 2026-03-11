@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { logoutUser } from '@/lib/firebase/auth';
 import { getShopByOwner, Booking, Shop } from '@/lib/firebase/db';
 import { db } from '@/lib/firebase/config';
-import { collection, query, where, onSnapshot, orderBy, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import { Play, LogOut, Loader2, ArrowRightCircle, Search, Calendar, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

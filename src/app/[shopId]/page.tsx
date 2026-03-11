@@ -67,7 +67,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/');
+      router.push('/customer/login');
     }
   }, [user, authLoading, router]);
 

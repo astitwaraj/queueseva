@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginCustomer, registerCustomer } from '@/lib/firebase/auth';
-import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
+import { User, Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CustomerAuth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export default function CustomerAuth() {
       if (isLogin) {
         await loginCustomer(email, password);
       } else {
-        await registerCustomer(email, password);
+        await registerCustomer(email, password, name);
       }
       router.push('/customer/dashboard');
     } catch (err: unknown) {
@@ -60,6 +61,24 @@ export default function CustomerAuth() {
           </div>
 
           <form onSubmit={handleAuth} className="space-y-6">
+            {!isLogin && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                <label className="block text-sm font-medium mb-2 text-foreground/80">Full Name</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-foreground-muted">
+                    <User size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 border border-foreground/10 rounded-xl bg-background-card text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all shadow-sm"
+                    placeholder="John Doe"
+                    required={!isLogin}
+                  />
+                </div>
+              </motion.div>
+            )}
             <div>
               <label className="block text-sm font-medium mb-2 text-foreground/80">Email</label>
               <div className="relative">

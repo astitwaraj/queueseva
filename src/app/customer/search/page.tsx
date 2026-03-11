@@ -6,19 +6,27 @@ import { motion } from 'framer-motion';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { Shop } from '@/lib/firebase/db';
-import { loginCustomerAnonymously  } from '@/lib/firebase/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { Search, Loader2, Store, ChevronRight } from 'lucide-react';
 
 export default function CustomerLanding() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoadingContext } = useAuth();
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [authLoading, setAuthLoading] = useState<string | null>(null);
 
+  // Auth Guard
   useEffect(() => {
+    if (!authLoadingContext && !user) {
+      router.push('/customer/login');
+    }
+  }, [user, authLoadingContext, router]);
+
+  useEffect(() => {
+    if (!user) return; // Wait for auth
+
     const fetchShops = async () => {
       try {
         const q = query(collection(db, 'shops'));
@@ -35,18 +43,18 @@ export default function CustomerLanding() {
       }
     };
     fetchShops();
-  }, []);
+  }, [user]);
 
   const handleShopSelect = async (shopId: string) => {
     setAuthLoading(shopId);
     try {
-      // Authenticate anonymously ONLY if not already logged in
       if (!user) {
-        await loginCustomerAnonymously();
+        router.push('/customer/login');
+        return;
       }
       router.push(`/${shopId}`);
     } catch (error) {
-      console.error("Error logging in anonymously", error);
+      console.error("Error routing to shop", error);
       setAuthLoading(null);
     }
   };

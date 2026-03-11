@@ -3,35 +3,45 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
-  signInAnonymously,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  updateProfile,
+  setPersistence,
+  browserSessionPersistence
 } from "firebase/auth";
 
 // Vendor Authentication
 export const registerVendor = async (email: string, pass: string) => {
+  await setPersistence(auth, browserSessionPersistence);
   return await createUserWithEmailAndPassword(auth, email, pass);
 };
 
 export const loginVendor = async (email: string, pass: string) => {
+  await setPersistence(auth, browserSessionPersistence);
   return await signInWithEmailAndPassword(auth, email, pass);
 };
 
 export const logoutUser = async () => {
-  return await signOut(auth);
+  const result = await signOut(auth);
+  // Aggressively clear all client-side storage to prevent credential reuse
+  if (typeof window !== 'undefined') {
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+  return result;
 };
 
 // Customer Authentication
-export const registerCustomer = async (email: string, pass: string) => {
-  return await createUserWithEmailAndPassword(auth, email, pass);
+export const registerCustomer = async (email: string, pass: string, name: string) => {
+  await setPersistence(auth, browserSessionPersistence);
+  const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+  await updateProfile(userCredential.user, { displayName: name });
+  return userCredential;
 };
 
 export const loginCustomer = async (email: string, pass: string) => {
+  await setPersistence(auth, browserSessionPersistence);
   return await signInWithEmailAndPassword(auth, email, pass);
-};
-
-export const loginCustomerAnonymously = async () => {
-  return await signInAnonymously(auth);
 };
 
 export const loginCustomerWithGoogle = async () => {
