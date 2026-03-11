@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
-import { Shop, Slot, createBooking } from '@/lib/firebase/db';
+import { Shop, Slot, Booking, createBooking } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, Clock, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import WaitlistAction from './WaitlistAction';
@@ -62,8 +62,17 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
   const days = generateDays(14); // Next 14 days
   const [selectedDate, setSelectedDate] = useState(days[0].dateStr);
   const [dbSlots, setDbSlots] = useState<{ [time: string]: Slot }>({});
+  const [userBookings, setUserBookings] = useState<Set<string>>(new Set());
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -82,8 +91,8 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
         }
 
         // Listen to active slots for selected date to show capacity
-        const q = query(collection(db, `shops/${params.shopId}/slots`), where('date', '==', selectedDate));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const qSlots = query(collection(db, `shops/${params.shopId}/slots`), where('date', '==', selectedDate));
+        const unsubscribeSlots = onSnapshot(qSlots, (snapshot) => {
           const slotMap: { [time: string]: Slot } = {};
           snapshot.forEach(doc => {
             const data = doc.data() as Slot;
@@ -93,7 +102,26 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
           setLoading(false);
         });
 
-        return () => unsubscribe();
+        // Listen to user's active bookings to prevent double booking
+        let unsubscribeBookings = () => {};
+        if (user) {
+          const qBookings = query(collection(db, 'bookings'), where('userId', '==', user.uid));
+          unsubscribeBookings = onSnapshot(qBookings, (snapshot) => {
+            const bookedSlotIds = new Set<string>();
+            snapshot.forEach(doc => {
+              const b = doc.data() as Booking;
+              if (b.shopId === params.shopId && (b.status === 'waiting' || b.status === 'serving')) {
+                bookedSlotIds.add(b.slotId);
+              }
+            });
+            setUserBookings(bookedSlotIds);
+          });
+        }
+
+        return () => {
+          unsubscribeSlots();
+          unsubscribeBookings();
+        };
       } catch (error) {
         console.error("Error fetching data", error);
         setLoading(false);
@@ -101,7 +129,10 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
     };
 
     if (user) {
-      fetchShopAndSlots();
+      const cleanup = fetchShopAndSlots();
+      return () => {
+        cleanup.then(unsub => unsub && unsub());
+      };
     }
   }, [params.shopId, selectedDate, user]);
 
@@ -170,6 +201,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
   // Determine slot state
   const getSlotState = (time: string) => {
     const slotData = dbSlots[time];
+    if (slotData && slotData.id && userBookings.has(slotData.id)) return 'already_booked';
     if (!slotData) return 'available'; // No bookings yet
     if (slotData.currentBookings >= shop.maxCapacity) return 'full';
     return 'available';
@@ -242,16 +274,25 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
                 stateStyles = isSelected
                   ? "border-violet-500 bg-violet-500/10 text-violet-500 shadow-[0_0_15px_rgba(167,139,250,0.2)]"
                   : "border-red-500/20 bg-red-500/5 text-red-500/70 opacity-70 hover:opacity-100 pattern-diagonal-lines-sm";
+              } else if (state === 'already_booked') {
+                stateStyles = "border-red-500 bg-red-500/10 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.2)] cursor-not-allowed";
               }
 
               return (
                  <button
                  key={time}
-                 onClick={() => setSelectedTime(time)}
+                 onClick={() => {
+                   if (state === 'already_booked') {
+                     setToastMessage("You have already booked this slot!");
+                     return;
+                   }
+                   setSelectedTime(time);
+                 }}
                  className={`${baseStyles} ${stateStyles}`}
                >
                  <span>{formatTime(time)}</span>
                  {state === 'full' && <span className="block text-[10px] uppercase mt-0.5 opacity-80">Blocked</span>}
+                 {state === 'already_booked' && <span className="block text-[10px] uppercase mt-0.5 font-bold">Booked</span>}
                </button>
               );
             })}
@@ -310,6 +351,20 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
               </div>
 
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] bg-red-500 text-white px-6 py-3 rounded-full font-medium shadow-glow-red flex items-center space-x-2 whitespace-nowrap"
+          >
+            <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>

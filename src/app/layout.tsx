@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Queue Seva",
   description: "Queue Management System - Next generation waitlist management.",
+  icons: {
+    icon: "/logo.webp",
+  },
 };
 
 export default function RootLayout({
