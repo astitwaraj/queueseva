@@ -7,10 +7,12 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { Shop } from '@/lib/firebase/db';
 import { loginCustomerAnonymously  } from '@/lib/firebase/auth';
+import { useAuth } from '@/contexts/AuthContext';
 import { Search, Loader2, Store, ChevronRight } from 'lucide-react';
 
 export default function CustomerLanding() {
   const router = useRouter();
+  const { user } = useAuth();
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,8 +40,10 @@ export default function CustomerLanding() {
   const handleShopSelect = async (shopId: string) => {
     setAuthLoading(shopId);
     try {
-      // Authenticate anonymously by default if they select a shop
-      await loginCustomerAnonymously();
+      // Authenticate anonymously ONLY if not already logged in
+      if (!user) {
+        await loginCustomerAnonymously();
+      }
       router.push(`/${shopId}`);
     } catch (error) {
       console.error("Error logging in anonymously", error);
