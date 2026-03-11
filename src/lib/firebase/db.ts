@@ -1,11 +1,7 @@
 import { db } from "./config";
 import { 
   collection, 
-  doc, 
-  getDoc, 
   getDocs, 
-  setDoc, 
-  updateDoc, 
   addDoc, 
   query, 
   where,
@@ -39,7 +35,7 @@ export interface Booking {
   slotId: string;
   tokenNumber: number;
   status: 'waiting' | 'serving' | 'completed' | 'cancelled';
-  createdAt: any; // Firestore Timestamp
+  createdAt: Timestamp; // Firestore Timestamp
   isWaitlist: boolean;
 }
 
