@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginCustomer, registerCustomer } from '@/lib/firebase/auth';
-import { User, Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
+import { User, Lock, Mail, ArrowRight, Loader2, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CustomerAuth() {
@@ -40,6 +40,15 @@ export default function CustomerAuth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background to-background/50 relative overflow-hidden">
+      {/* Back Button */}
+      <button 
+        onClick={() => router.push('/')} 
+        className="absolute top-6 left-6 z-50 flex items-center space-x-2 text-foreground-muted hover:text-foreground transition-colors"
+      >
+        <ChevronLeft size={20} />
+        <span className="text-sm font-medium">Home</span>
+      </button>
+
       {/* Background glow effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-glow-cyan rounded-full mix-blend-screen filter blur-[128px] opacity-50"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-glow-violet rounded-full mix-blend-screen filter blur-[128px] opacity-50"></div>
