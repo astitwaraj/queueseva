@@ -251,7 +251,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
                  className={`${baseStyles} ${stateStyles}`}
                >
                  <span>{formatTime(time)}</span>
-                 {state === 'full' && <span className="block text-[10px] uppercase mt-0.5 opacity-80">Full</span>}
+                 {state === 'full' && <span className="block text-[10px] uppercase mt-0.5 opacity-80">Blocked</span>}
                </button>
               );
             })}
