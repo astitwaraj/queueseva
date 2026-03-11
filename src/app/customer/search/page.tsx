@@ -7,7 +7,7 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { Shop } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Loader2, Store, ChevronRight } from 'lucide-react';
+import { Search, Loader2, Store, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export default function CustomerLanding() {
   const router = useRouter();
@@ -66,6 +66,15 @@ export default function CustomerLanding() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Back Button */}
+      <button 
+        onClick={() => router.push('/customer/dashboard')} 
+        className="absolute top-6 left-6 z-50 flex items-center space-x-2 text-foreground-muted hover:text-foreground transition-colors"
+      >
+        <ChevronLeft size={20} />
+        <span className="text-sm font-medium">Dashboard</span>
+      </button>
+
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-glow-cyan rounded-full mix-blend-screen filter blur-[150px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-glow-violet rounded-full mix-blend-screen filter blur-[150px] opacity-20 translate-y-1/4 -translate-x-1/4"></div>
