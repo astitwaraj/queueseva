@@ -141,12 +141,12 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
     setBookingLoading(true);
 
     try {
-      // Create slot document if it doesn't exist yet, or update it
       let slotId = dbSlots[selectedTime]?.id;
       
-      const { createSlot } = await import('@/lib/firebase/db');
+      const { runTransaction } = await import('firebase/firestore');
 
       if (!slotId) {
+        const { createSlot } = await import('@/lib/firebase/db');
         slotId = await createSlot(params.shopId, {
           startTime: selectedTime,
           date: selectedDate,
@@ -154,15 +154,24 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
           waitlistCount: isWaitlist ? 1 : 0
         });
       } else {
-        // Real logic should use Firestore Transactions for atomic capacity updates
-        // For MVP, simplistic update:
-        const { updateDoc } = await import('firebase/firestore');
         const slotRef = doc(db, `shops/${params.shopId}/slots`, slotId);
         
-        const currentData = dbSlots[selectedTime];
-        await updateDoc(slotRef, {
-          currentBookings: isWaitlist ? (currentData.currentBookings || 0) : (currentData.currentBookings || 0) + 1,
-          waitlistCount: isWaitlist ? (currentData.waitlistCount || 0) + 1 : (currentData.waitlistCount || 0)
+        await runTransaction(db, async (transaction) => {
+          const slotDoc = await transaction.get(slotRef);
+          if (!slotDoc.exists()) throw new Error("Slot not found");
+          
+          const currentData = slotDoc.data();
+          const currentBookings = currentData.currentBookings || 0;
+          const waitlistCount = currentData.waitlistCount || 0;
+
+          if (!isWaitlist && currentBookings >= shop.maxCapacity) {
+             throw new Error("Sorry, this slot just became full! Please click it again to join the waitlist.");
+          }
+
+          transaction.update(slotRef, {
+            currentBookings: isWaitlist ? currentBookings : currentBookings + 1,
+            waitlistCount: isWaitlist ? waitlistCount + 1 : waitlistCount
+          });
         });
       }
 
@@ -173,7 +182,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
       const bookingId = await createBooking({
         userId: user.uid,
         shopId: params.shopId,
-        slotId: slotId,
+        slotId: slotId, // Guaranteed to be a string here
         tokenNumber: tokenNumber,
         status: 'waiting',
         isWaitlist
@@ -181,8 +190,9 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
 
       router.push(`/ticket/${bookingId}`);
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error booking slot", error);
+      setToastMessage(error instanceof Error ? error.message : "Failed to book slot. Please try again.");
     } finally {
       setBookingLoading(false);
     }
@@ -272,8 +282,8 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
                   : "border-foreground/10 bg-background-card text-foreground hover:border-cyan-500/50";
               } else if (state === 'full') {
                 stateStyles = isSelected
-                  ? "border-violet-500 bg-violet-500/10 text-violet-500 shadow-[0_0_15px_rgba(167,139,250,0.2)]"
-                  : "border-red-500/20 bg-red-500/5 text-red-500/70 opacity-70 hover:opacity-100 pattern-diagonal-lines-sm";
+                  ? "border-yellow-500 bg-yellow-500/10 text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                  : "border-yellow-500/30 bg-yellow-500/5 text-yellow-500/90 hover:border-yellow-500/50";
               } else if (state === 'already_booked') {
                 stateStyles = "border-red-500 bg-red-500/10 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.2)] cursor-not-allowed";
               }
@@ -291,7 +301,16 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
                  className={`${baseStyles} ${stateStyles}`}
                >
                  <span>{formatTime(time)}</span>
-                 {state === 'full' && <span className="block text-[10px] uppercase mt-0.5 opacity-80">Blocked</span>}
+                 {state === 'full' && (
+                   <div className="flex items-center justify-center mt-0.5 space-x-1">
+                     <span className="block text-[10px] uppercase font-bold text-yellow-500">Waitlist</span>
+                     {(dbSlots[time]?.waitlistCount || 0) > 0 && (
+                       <span className="bg-yellow-500/20 text-yellow-500 text-[9px] px-1.5 py-0.5 rounded-full font-bold">
+                         {dbSlots[time].waitlistCount}
+                       </span>
+                     )}
+                   </div>
+                 )}
                  {state === 'already_booked' && <span className="block text-[10px] uppercase mt-0.5 font-bold">Booked</span>}
                </button>
               );
@@ -314,7 +333,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
               
               <div className="flex items-center space-x-3 w-full md:w-auto">
                 <div className={`px-4 h-12 flex-shrink-0 rounded-xl flex items-center justify-center font-bold text-sm ${
-                  isSelectedFull ? 'bg-violet-500/20 text-violet-500' : 'bg-cyan-500/20 text-cyan-500'
+                  isSelectedFull ? 'bg-yellow-500/20 text-yellow-500' : 'bg-cyan-500/20 text-cyan-500'
                 }`}>
                   {formatTime(selectedTime)}
                 </div>
