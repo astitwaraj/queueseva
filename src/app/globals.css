@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --background-card: rgba(255, 255, 255, 0.8);
+  --foreground: #0f172a;
+  --foreground-muted: #64748b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a;
+    --background-card: rgba(30, 41, 59, 0.7);
+    --foreground: #f8fafc;
+    --foreground-muted: #94a3b8;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background-color: var(--background-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel {
+  @apply glass rounded-3xl shadow-glass;
+}
