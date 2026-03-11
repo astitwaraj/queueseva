@@ -130,8 +130,8 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
         
         const currentData = dbSlots[selectedTime];
         await updateDoc(slotRef, {
-          currentBookings: isWaitlist ? currentData.currentBookings : currentData.currentBookings + 1,
-          waitlistCount: isWaitlist ? currentData.waitlistCount + 1 : currentData.waitlistCount
+          currentBookings: isWaitlist ? (currentData.currentBookings || 0) : (currentData.currentBookings || 0) + 1,
+          waitlistCount: isWaitlist ? (currentData.waitlistCount || 0) + 1 : (currentData.waitlistCount || 0)
         });
       }
 

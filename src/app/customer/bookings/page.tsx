@@ -35,11 +35,17 @@ export default function CustomerBookings() {
         })) as Booking[];
 
         const bookingsWithShops = await Promise.all(userBookings.map(async (booking) => {
-          const shopDoc = await getDoc(doc(db, 'shops', booking.shopId));
-          return {
-            ...booking,
-            shopData: shopDoc.exists() ? { id: shopDoc.id, ...shopDoc.data() } as Shop : undefined
-          };
+          if (!booking.shopId) return booking;
+          try {
+            const shopDoc = await getDoc(doc(db, 'shops', booking.shopId));
+            return {
+              ...booking,
+              shopData: shopDoc.exists() ? { id: shopDoc.id, ...shopDoc.data() } as Shop : undefined
+            };
+          } catch (err) {
+            console.error("Failed fetching shop for booking", booking.id, err);
+            return booking;
+          }
         }));
         
         setBookings(bookingsWithShops);
