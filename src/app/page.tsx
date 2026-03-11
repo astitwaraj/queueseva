@@ -21,7 +21,7 @@ export default function HomeLanding() {
         >
           <div className="inline-flex items-center space-x-2 bg-foreground/5 py-2 px-4 rounded-full text-sm font-medium mb-6 text-foreground-muted border border-foreground/10">
             <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-            <span>Welcome to QueueFlow</span>
+            <span>Welcome to Queue Seva</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground-muted">
             Skip the line. <br className="hidden md:block" /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-violet-500">Wait smarter.</span>

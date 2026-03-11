@@ -52,7 +52,7 @@ export default function VendorAuth() {
         <div className="glass-panel p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold tracking-tight mb-2">
-              QueueFlow <span className="text-cyan-500">Vendor</span>
+              Queue Seva <span className="text-cyan-500">Vendor</span>
             </h1>
             <p className="text-foreground-muted">
               {isLogin ? 'Welcome back! Login to manage your queue.' : 'Create an account to digitize your queue.'}
@@ -71,7 +71,7 @@ export default function VendorAuth() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 pr-3 py-3 border border-foreground/10 rounded-xl bg-background-card text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all shadow-sm"
-                  placeholder="vendor@queueflow.com"
+                  placeholder="vendor@queueseva.com"
                   required
                 />
               </div>

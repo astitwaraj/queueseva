@@ -1,6 +1,6 @@
-# QueueFlow SaaS 🚀
+# Queue Seva 🚀
 
-QueueFlow is a modern, premium SaaS queue management software. Built for businesses to digitize their waiting lists, enabling customers to skip the physical line and wait smarter through live queue tracking and virtual tokens. 
+Queue Seva is a modern, premium SaaS queue management software. Built for businesses to digitize their waiting lists, enabling customers to skip the physical line and wait smarter through live queue tracking and virtual tokens. 
 
 ## Tech Stack
 * **Framework:** [Next.js 14](https://nextjs.org/) (App Router)

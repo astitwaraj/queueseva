@@ -52,7 +52,7 @@ export default function CustomerAuth() {
         <div className="glass-panel p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold tracking-tight mb-2">
-              QueueFlow <span className="text-cyan-500">Customer</span>
+              Queue Seva <span className="text-cyan-500">Customer</span>
             </h1>
             <p className="text-foreground-muted">
               {isLogin ? 'Welcome back! Login to book slots.' : 'Create an account to join queues.'}

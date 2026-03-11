@@ -6,7 +6,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "QueueFlow SaaS",
+  title: "Queue Seva",
   description: "Queue Management System - Next generation waitlist management.",
 };
 
