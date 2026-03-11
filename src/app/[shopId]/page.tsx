@@ -7,7 +7,7 @@ import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/fire
 import { db } from '@/lib/firebase/config';
 import { Shop, Slot, createBooking } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
-import { Calendar, Clock, ChevronLeft, ChevronRight, Loader2, Info } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import WaitlistAction from './WaitlistAction';
 
 // Utility to generate days for the horizontal picker
@@ -24,6 +24,15 @@ const generateDays = (numDays: number) => {
     });
   }
   return days;
+};
+
+// Utility to format 24h time to 12h AM/PM
+const formatTime = (time24: string) => {
+  const [hourStr, minStr] = time24.split(':');
+  let hour = parseInt(hourStr, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+  return `${hour}:${minStr} ${ampm}`;
 };
 
 // Utility to generate time slots (09:00 to 17:00)
@@ -241,7 +250,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
                  onClick={() => setSelectedTime(time)}
                  className={`${baseStyles} ${stateStyles}`}
                >
-                 <span>{time}</span>
+                 <span>{formatTime(time)}</span>
                  {state === 'full' && <span className="block text-[10px] uppercase mt-0.5 opacity-80">Full</span>}
                </button>
               );
@@ -263,10 +272,10 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
             <div className="max-w-2xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-6">
               
               <div className="flex items-center space-x-3 w-full md:w-auto">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${
+                <div className={`px-4 h-12 flex-shrink-0 rounded-xl flex items-center justify-center font-bold text-sm ${
                   isSelectedFull ? 'bg-violet-500/20 text-violet-500' : 'bg-cyan-500/20 text-cyan-500'
                 }`}>
-                  {selectedTime}
+                  {formatTime(selectedTime)}
                 </div>
                 <div>
                   <p className="font-semibold">{isSelectedFull ? 'Slot is Full' : 'Slot Available'}</p>
@@ -278,7 +287,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
 
               <div className="w-full md:w-auto">
                 {isSelectedFull ? (
-                  <WaitlistAction 
+                  <WaitlistAction
                     waitlistCount={selectedSlotData?.waitlistCount || 0} 
                     maxCapacity={shop.maxCapacity}
                     onJoin={() => handleBookSlot(true)}
