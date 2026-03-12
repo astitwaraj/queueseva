@@ -4,16 +4,18 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { doc, onSnapshot, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
-import { Booking, Shop } from '@/lib/firebase/db';
+import { Booking, Shop, Slot } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { QrCode, ArrowLeft, Loader2, CheckCircle, Clock } from 'lucide-react';
+import { QrCode, ArrowLeft, Loader2, CheckCircle, Clock as ClockIcon, Calendar } from 'lucide-react';
+import { formatSlotDate, formatSlotTime } from '@/lib/utils/formatters';
 
 export default function TicketView({ params }: { params: { bookingId: string } }) {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [shop, setShop] = useState<Shop | null>(null);
+  const [slot, setSlot] = useState<Slot | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,11 +27,23 @@ export default function TicketView({ params }: { params: { bookingId: string } }
   // Real-time listener for this specific booking
   useEffect(() => {
     const fetchInitialData = async (b: Booking) => {
-      const shopDoc = await getDoc(doc(db, 'shops', b.shopId));
-      if (shopDoc.exists()) {
-        setShop({ id: shopDoc.id, ...shopDoc.data() } as Shop);
+      try {
+        const [shopDoc, slotDoc] = await Promise.all([
+          getDoc(doc(db, 'shops', b.shopId)),
+          b.slotId ? getDoc(doc(db, `shops/${b.shopId}/slots`, b.slotId)) : Promise.resolve(null)
+        ]);
+
+        if (shopDoc.exists()) {
+          setShop({ id: shopDoc.id, ...shopDoc.data() } as Shop);
+        }
+        if (slotDoc?.exists()) {
+          setSlot({ id: slotDoc.id, ...slotDoc.data() } as Slot);
+        }
+      } catch (err) {
+        console.error("Error fetching ticket details:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     const unsubscribe = onSnapshot(doc(db, 'bookings', params.bookingId), (docSnapshot) => {
@@ -38,7 +52,7 @@ export default function TicketView({ params }: { params: { bookingId: string } }
         setBooking(data);
         
         // Fetch shop details if we don't have them yet
-        if (!shop) {
+        if (!shop || !slot) {
           fetchInitialData(data);
         }
       } else {
@@ -48,7 +62,7 @@ export default function TicketView({ params }: { params: { bookingId: string } }
     });
 
     return () => unsubscribe();
-  }, [params.bookingId, shop]);
+  }, [params.bookingId, shop, slot]);
 
   if (loading || !booking || !shop) {
     return (
@@ -126,18 +140,18 @@ export default function TicketView({ params }: { params: { bookingId: string } }
               </div>
 
               {/* Status Indicator */}
-              <div className="w-full p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-center space-x-4 mb-8">
+              <div className="w-full p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-center space-x-4 mb-6">
                 {isServing ? (
                   <>
                     <motion.div 
                       animate={{ scale: [1, 1.2, 1] }} 
                       transition={{ repeat: Infinity, duration: 2 }}
                     />
-                      <Clock className="text-cyan-500" size={24} />
+                      <ClockIcon className="text-cyan-500" size={24} />
                     <span className="font-bold text-lg text-cyan-500">Its your turn!</span>
                   </>
                 ) : isCompleted ? (
-                   <>
+                  <>
                     <CheckCircle className="text-green-500" size={24} />
                     <span className="font-bold text-lg text-green-500">Service Completed</span>
                   </>
@@ -149,6 +163,24 @@ export default function TicketView({ params }: { params: { bookingId: string } }
                     </span>
                   </>
                 )}
+              </div>
+
+              {/* Slot Details */}
+              <div className="flex w-full justify-between gap-4 mb-8">
+                <div className="flex-1 p-3 rounded-xl bg-foreground/5 border border-foreground/5 flex items-center space-x-3">
+                  <Calendar size={16} className="text-cyan-500" />
+                  <div className="text-left">
+                    <p className="text-[10px] text-foreground-muted uppercase font-bold tracking-wider">Date</p>
+                    <p className="text-sm font-semibold">{formatSlotDate(slot?.date || '')}</p>
+                  </div>
+                </div>
+                <div className="flex-1 p-3 rounded-xl bg-foreground/5 border border-foreground/5 flex items-center space-x-3">
+                  <ClockIcon size={16} className="text-cyan-500" />
+                  <div className="text-left">
+                    <p className="text-[10px] text-foreground-muted uppercase font-bold tracking-wider">Time</p>
+                    <p className="text-sm font-semibold">{formatSlotTime(slot?.startTime || '')}</p>
+                  </div>
+                </div>
               </div>
 
               {/* Fake QR Code for realism */}

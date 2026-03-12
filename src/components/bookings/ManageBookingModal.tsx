@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Edit3, Calendar, Clock, AlertCircle, Loader2 } from 'lucide-react';
 import { Booking, Shop, Slot } from '@/lib/firebase/db';
+import { formatSlotDate, formatSlotTime } from '@/lib/utils/formatters';
 
 interface ManageBookingModalProps {
   booking: (Booking & { shopData?: Shop; slotData?: Slot }) | null;
@@ -55,7 +56,7 @@ export default function ManageBookingModal({
                 <Calendar className="text-cyan-500 mr-4" size={20} />
                 <div>
                   <p className="text-xs text-foreground-muted uppercase font-bold tracking-wider">Date</p>
-                  <p className="font-semibold">{booking.slotData?.date || 'N/A'}</p>
+                  <p className="font-semibold">{formatSlotDate(booking.slotData?.date || '')}</p>
                 </div>
               </div>
               
@@ -63,7 +64,7 @@ export default function ManageBookingModal({
                 <Clock className="text-cyan-500 mr-4" size={20} />
                 <div>
                   <p className="text-xs text-foreground-muted uppercase font-bold tracking-wider">Time Slot</p>
-                  <p className="font-semibold">{booking.slotData?.startTime || 'N/A'}</p>
+                  <p className="font-semibold">{formatSlotTime(booking.slotData?.startTime || '')}</p>
                 </div>
               </div>
 
