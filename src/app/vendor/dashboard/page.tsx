@@ -151,8 +151,15 @@ export default function VendorDashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex flex-col items-center justify-center py-6"
                 >
-                  <div className="text-8xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-cyan-500 to-violet-500 mb-6 drop-shadow-xl">
+                  <div className="text-8xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-cyan-500 to-violet-500 mb-2 drop-shadow-xl">
                     #{currentlyServing.tokenNumber}
+                  </div>
+                  
+                  <div className="mb-6 text-center">
+                    <p className="text-2xl font-bold text-foreground">{currentlyServing.userName || 'Customer'}</p>
+                    {currentlyServing.showContactToVendor && currentlyServing.userPhone && (
+                      <p className="text-cyan-500 font-medium">{currentlyServing.userPhone}</p>
+                    )}
                   </div>
                   
                   <button 
@@ -251,8 +258,16 @@ export default function VendorDashboard() {
                         #{booking.tokenNumber}
                       </div>
                       <div>
-                        <p className="font-medium">Ticket {booking.tokenNumber}</p>
-                        <p className="text-xs text-foreground-muted">{booking.isWaitlist ? 'Waitlisted Token' : 'Regular Booking'}</p>
+                        <p className="font-bold">#{booking.tokenNumber} - {booking.userName || 'Customer'}</p>
+                        <div className="flex items-center space-x-2">
+                          <p className="text-xs text-foreground-muted">{booking.isWaitlist ? 'Waitlisted' : 'Regular'}</p>
+                          {booking.showContactToVendor && booking.userPhone && (
+                            <>
+                              <span className="text-foreground-muted/30">•</span>
+                              <p className="text-xs text-cyan-500 font-medium">{booking.userPhone}</p>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                     {idx === 0 && !currentlyServing && (

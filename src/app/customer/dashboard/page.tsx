@@ -2,10 +2,11 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, ListOrdered, LogOut, Loader2 } from 'lucide-react';
+import { Search, ListOrdered, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { logoutUser } from '@/lib/firebase/auth';
+
 import { useAuth } from '@/contexts/AuthContext';
+import Navbar from '@/components/layout/Navbar';
 
 export default function CustomerDashboard() {
   const router = useRouter();
@@ -17,10 +18,6 @@ export default function CustomerDashboard() {
     }
   }, [user, authLoading, router]);
 
-  const handleLogout = async () => {
-    await logoutUser();
-    router.push('/');
-  };
 
   if (authLoading) {
     return (
@@ -38,21 +35,7 @@ export default function CustomerDashboard() {
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-glow-cyan rounded-full mix-blend-screen filter blur-[150px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
       
-      {/* Navbar directly inside for simplicity */}
-      <header className="border-b border-foreground/5 bg-background/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-bold text-xl tracking-tight">
-            Queue Seva <span className="text-cyan-500">Customer</span>
-          </div>
-          <button 
-            onClick={handleLogout}
-            className="text-foreground-muted hover:text-foreground flex items-center text-sm font-medium transition-colors"
-          >
-            <LogOut size={16} className="mr-2" />
-            Sign Out
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="max-w-5xl mx-auto px-6 py-12 relative z-10 w-full flex-grow flex flex-col items-center justify-center">
         <motion.div 

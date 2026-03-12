@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
-import { Shop, Slot, Booking, createBooking } from '@/lib/firebase/db';
+import { Shop, Slot, Booking, createBooking, getUserProfile } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, Clock, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import WaitlistAction from './WaitlistAction';
@@ -191,6 +191,9 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
       // Generate a meaningful token number based on user, shop, and slot
       const tokenNumber = generateTokenNumber(user.uid, params.shopId, slotId);
 
+      // Fetch profile to auto-fill details
+      const profile = await getUserProfile(user.uid);
+
       // Create Booking
       const bookingId = await createBooking({
         userId: user.uid,
@@ -198,7 +201,11 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
         slotId: slotId, // Guaranteed to be a string here
         tokenNumber: tokenNumber,
         status: 'waiting',
-        isWaitlist
+        isWaitlist,
+        userName: profile?.displayName || user.displayName || 'Guest',
+        userEmail: profile?.email || user.email || '',
+        userPhone: profile?.phoneNumber || '',
+        showContactToVendor: profile?.showContactToVendor ?? true
       });
 
       router.push(`/ticket/${bookingId}`);

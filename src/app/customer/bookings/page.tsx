@@ -2,6 +2,7 @@
 
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { useCustomerBookings } from '@/hooks/useCustomerBookings';
+import Navbar from '@/components/layout/Navbar';
 
 // Extracted Components
 import BookingCard from '@/components/bookings/BookingCard';
@@ -36,17 +37,17 @@ export default function CustomerBookings() {
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-glow-violet rounded-full mix-blend-screen filter blur-[150px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
       
-      <header className="border-b border-foreground/5 bg-background/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center">
-          <button 
-            onClick={() => router.push('/customer/dashboard')}
-            className="text-foreground-muted hover:text-foreground flex items-center text-sm font-medium transition-colors"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Back to Dashboard
-          </button>
-        </div>
-      </header>
+      <Navbar subtitle="Bookings" />
+      
+      <div className="max-w-5xl mx-auto px-6 py-4">
+        <button 
+          onClick={() => router.push('/customer/dashboard')}
+          className="text-foreground-muted hover:text-foreground flex items-center text-sm font-medium transition-colors"
+        >
+          <ArrowLeft size={16} className="mr-2" />
+          Back to Dashboard
+        </button>
+      </div>
 
       <main className="max-w-3xl mx-auto px-6 py-12 relative z-10 w-full flex-grow">
         <div className="mb-10">

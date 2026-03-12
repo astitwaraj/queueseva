@@ -8,6 +8,7 @@ import { db } from '@/lib/firebase/config';
 import { Shop } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
 import { Search, Loader2, Store, ChevronRight, ArrowLeft } from 'lucide-react';
+import Navbar from '@/components/layout/Navbar';
 
 export default function CustomerLanding() {
   const router = useRouter();
@@ -66,17 +67,17 @@ export default function CustomerLanding() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
-      <header className="border-b border-foreground/5 bg-background/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center">
-          <button 
-            onClick={() => router.push('/customer/dashboard')}
-            className="text-foreground-muted hover:text-foreground flex items-center text-sm font-medium transition-colors"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Back to Dashboard
-          </button>
-        </div>
-      </header>
+      <Navbar subtitle="Search" />
+      
+      <div className="max-w-5xl mx-auto px-6 py-4">
+        <button 
+          onClick={() => router.push('/customer/dashboard')}
+          className="text-foreground-muted hover:text-foreground flex items-center text-sm font-medium transition-colors"
+        >
+          <ArrowLeft size={16} className="mr-2" />
+          Back to Dashboard
+        </button>
+      </div>
 
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-glow-cyan rounded-full mix-blend-screen filter blur-[150px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>

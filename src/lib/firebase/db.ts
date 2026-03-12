@@ -39,6 +39,19 @@ export interface Booking {
   status: 'waiting' | 'serving' | 'completed' | 'cancelled';
   createdAt: Timestamp; // Firestore Timestamp
   isWaitlist: boolean;
+  userName?: string;
+  userEmail?: string;
+  userPhone?: string;
+  showContactToVendor?: boolean;
+}
+
+export interface UserProfile {
+  id: string; // matches auth UID
+  displayName: string;
+  email: string;
+  phoneNumber: string;
+  showContactToVendor: boolean;
+  updatedAt?: Timestamp;
 }
 
 // --- Collections ---
@@ -130,5 +143,26 @@ export const getUserBookingsWithDetails = async (userId: string) => {
     }
   }));
 
+
   return bookingsWithDetails as (Booking & { shopData?: Shop; slotData?: Slot })[];
+};
+
+// User Profiles
+const USERS_COL = "users";
+
+export const getUserProfile = async (userId: string) => {
+  const userDoc = await getDoc(doc(db, USERS_COL, userId));
+  if (userDoc.exists()) {
+    return { id: userDoc.id, ...userDoc.data() } as UserProfile;
+  }
+  return null;
+};
+
+export const updateUserProfile = async (userId: string, profileData: Partial<Omit<UserProfile, 'id' | 'updatedAt'>>) => {
+  const { setDoc, doc, serverTimestamp } = await import('firebase/firestore');
+  const userRef = doc(db, USERS_COL, userId);
+  await setDoc(userRef, {
+    ...profileData,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
 };
