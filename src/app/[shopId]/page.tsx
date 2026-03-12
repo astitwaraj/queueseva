@@ -7,7 +7,7 @@ import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/fire
 import { db } from '@/lib/firebase/config';
 import { Shop, Slot, Booking, createBooking, getUserProfile } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
-import { Calendar, Clock, ChevronLeft, ChevronRight, Loader2, ArrowLeft, Info, MapPin, Tag } from 'lucide-react';
+import { Calendar, Clock, ChevronRight, Loader2, ArrowLeft, Info } from 'lucide-react';
 import WaitlistAction from './WaitlistAction';
 import Navbar from '@/components/layout/Navbar';
 

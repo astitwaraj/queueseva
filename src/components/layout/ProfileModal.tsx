@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Mail, Phone, ShieldCheck, Loader2, Save } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,13 +23,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   });
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isOpen && user) {
-      fetchProfile();
-    }
-  }, [isOpen, user]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     if (!user) return;
     setLoading(true);
     try {
@@ -50,7 +44,13 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (isOpen && user) {
+      fetchProfile();
+    }
+  }, [isOpen, user, fetchProfile]);
 
   const validatePhone = (phone: string) => {
     const indianPhoneRegex = /^\+91[6789]\d{9}$/;
