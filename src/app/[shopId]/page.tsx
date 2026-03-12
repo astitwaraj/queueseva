@@ -51,6 +51,19 @@ const generateTimeSlots = (duration: number) => {
   return slots;
 };
 
+// Utility to generate a meaningful token number
+const generateTokenNumber = (uid: string, shopId: string, slotId: string) => {
+  const combined = `${uid}-${shopId}-${slotId}`;
+  let hash = 0;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  // Generate a 4-digit number (1000-9999)
+  return Math.abs(hash % 9000) + 1000;
+};
+
 export default function ShopBookingView({ params }: { params: { shopId: string } }) {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -175,8 +188,8 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
         });
       }
 
-      // Generate a simple token number based on time and capacity
-      const tokenNumber = Math.floor(Math.random() * 1000) + 1;
+      // Generate a meaningful token number based on user, shop, and slot
+      const tokenNumber = generateTokenNumber(user.uid, params.shopId, slotId);
 
       // Create Booking
       const bookingId = await createBooking({
