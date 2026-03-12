@@ -106,7 +106,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-md glass-panel border border-foreground/10 shadow-2xl overflow-hidden flex flex-col"
+          className="relative w-full max-w-md bg-[#1a1f2e] border border-white/10 shadow-2xl rounded-3xl overflow-hidden flex flex-col"
         >
           {/* Header */}
           <div className="p-6 border-b border-foreground/5 flex items-center justify-between">
@@ -233,7 +233,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold py-3 rounded-xl shadow-glow-cyan hover:shadow-glow-violet transition-all flex items-center justify-center space-x-2 disabled:opacity-70"
+                className="w-full bg-gradient-to-r from-cyan-600 to-violet-600 text-white font-bold py-3 rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 disabled:opacity-70"
               >
                 {saving ? <Loader2 className="animate-spin" size={18} /> : (
                   <>

@@ -38,7 +38,7 @@ export default function Navbar({ title = "Queue Seva", subtitle = "Customer" }: 
   return (
     <>
       <header className="border-b border-foreground/5 bg-background/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div 
             className="flex items-center cursor-pointer" 
             onClick={() => router.push('/customer/dashboard')}
@@ -65,7 +65,7 @@ export default function Navbar({ title = "Queue Seva", subtitle = "Customer" }: 
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-2 w-48 glass-panel border border-foreground/10 shadow-xl overflow-hidden z-50"
+                  className="absolute right-0 mt-2 w-48 bg-[#1a1f2e] border border-white/10 shadow-2xl rounded-2xl overflow-hidden z-50"
                 >
                   <div className="p-3 border-b border-foreground/5">
                     <p className="text-xs font-semibold text-foreground-muted truncate">{user?.email}</p>

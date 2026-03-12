@@ -73,20 +73,19 @@ export default function CustomerBookings() {
       
       <Navbar subtitle="Bookings" />
       
-      <div className="max-w-5xl mx-auto px-6 py-4">
-        <button 
-          onClick={() => router.push('/customer/dashboard')}
-          className="text-foreground-muted hover:text-foreground flex items-center text-sm font-medium transition-colors"
-        >
-          <ArrowLeft size={16} className="mr-2" />
-          Back to Dashboard
-        </button>
-      </div>
-
-      <main className="max-w-3xl mx-auto px-6 py-12 relative z-10 w-full flex-grow">
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold tracking-tight mb-2">My Bookings</h1>
-          <p className="text-foreground-muted">View your active tokens and queue status.</p>
+      <main className="max-w-7xl mx-auto px-6 py-8 relative z-10 w-full flex-grow">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <div>
+            <button 
+              onClick={() => router.push('/customer/dashboard')}
+              className="text-foreground-muted hover:text-foreground flex items-center text-sm font-medium transition-colors mb-4"
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              Back to Dashboard
+            </button>
+            <h1 className="text-3xl font-bold tracking-tight">My Bookings</h1>
+            <p className="text-foreground-muted text-sm mt-1">View your active tokens and queue status.</p>
+          </div>
         </div>
 
         {bookings.length > 0 && (

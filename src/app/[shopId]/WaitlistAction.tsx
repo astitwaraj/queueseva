@@ -34,11 +34,11 @@ export default function WaitlistAction({ waitlistCount, maxCapacity, onJoin, loa
       <motion.div 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className={`flex flex-col items-center justify-center px-4 py-2 rounded-xl border border-foreground/5 shadow-inner ${probBg}`}
+        className={`flex flex-col items-center justify-center px-4 py-2 rounded-xl border border-white/5 shadow-inner ${probBg}`}
       >
         <span className={`font-bold text-lg md:text-xl ${probColor}`}>{probability}%</span>
-        <span className="text-[10px] md:text-xs text-foreground-muted font-medium uppercase tracking-wider">
-          Confirmation Prob.
+        <span className="text-[10px] md:text-xs text-gray-400 font-medium uppercase tracking-wider">
+          Prob.
         </span>
       </motion.div>
 
@@ -46,7 +46,7 @@ export default function WaitlistAction({ waitlistCount, maxCapacity, onJoin, loa
       <button
         onClick={onJoin}
         disabled={loading}
-        className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-600 to-violet-500 text-white py-4 px-6 md:px-8 rounded-xl font-bold hover:shadow-glow-violet transition-all disabled:opacity-70 group"
+        className="w-full sm:w-auto flex flex-grow items-center justify-center space-x-2 bg-gradient-to-r from-violet-600 to-violet-500 text-white py-4 px-6 md:px-8 rounded-xl font-bold hover:shadow-low-violet transition-all disabled:opacity-70 group"
       >
         {loading ? (
           <Loader2 className="animate-spin" size={20} />
