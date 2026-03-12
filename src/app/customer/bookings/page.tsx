@@ -1,63 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
-import { Booking, Shop } from '@/lib/firebase/db';
-import { motion } from 'framer-motion';
-import { Loader2, ArrowLeft, Ticket, Store } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { useCustomerBookings } from '@/hooks/useCustomerBookings';
+
+// Extracted Components
+import BookingCard from '@/components/bookings/BookingCard';
+import ManageBookingModal from '@/components/bookings/ManageBookingModal';
+import DeleteBookingModal from '@/components/bookings/DeleteBookingModal';
+import EmptyBookings from '@/components/bookings/EmptyBookings';
 
 export default function CustomerBookings() {
-  const { user, loading: authLoading } = useAuth();
-  const router = useRouter();
-  
-  const [bookings, setBookings] = useState<(Booking & { shopData?: Shop })[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/customer/login');
-    }
-  }, [user, authLoading, router]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchBookings = async () => {
-      try {
-        const q = query(collection(db, 'bookings'), where('userId', '==', user.uid));
-        const querySnapshot = await getDocs(q);
-        const userBookings = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Booking[];
-
-        const bookingsWithShops = await Promise.all(userBookings.map(async (booking) => {
-          if (!booking.shopId) return booking;
-          try {
-            const shopDoc = await getDoc(doc(db, 'shops', booking.shopId));
-            return {
-              ...booking,
-              shopData: shopDoc.exists() ? { id: shopDoc.id, ...shopDoc.data() } as Shop : undefined
-            };
-          } catch (err) {
-            console.error("Failed fetching shop for booking", booking.id, err);
-            return booking;
-          }
-        }));
-        
-        setBookings(bookingsWithShops);
-      } catch (error) {
-        console.error("Error fetching bookings", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookings();
-  }, [user]);
+  const {
+    authLoading,
+    bookings,
+    loading,
+    selectedBooking,
+    setSelectedBooking,
+    bookingToDelete,
+    setBookingToDelete,
+    actionLoading,
+    handleCancel,
+    handleReschedule,
+    router
+  } = useCustomerBookings();
 
   if (loading || authLoading) {
     return (
@@ -90,56 +55,37 @@ export default function CustomerBookings() {
         </div>
 
         {bookings.length === 0 ? (
-          <div className="text-center py-20 bg-foreground/5 rounded-3xl border border-foreground/5 border-dashed">
-            <Ticket size={48} className="mx-auto mb-4 opacity-50 text-foreground-muted" />
-            <p className="text-foreground-muted">You have no bookings yet.</p>
-            <button 
-              onClick={() => router.push('/customer/search')}
-              className="mt-6 px-6 py-3 bg-cyan-500/10 text-cyan-500 font-medium rounded-xl hover:bg-cyan-500/20 transition-colors"
-            >
-              Find a Service
-            </button>
-          </div>
+          <EmptyBookings />
         ) : (
           <div className="space-y-4">
             {bookings.map((booking, idx) => (
-              <motion.div
+              <BookingCard 
                 key={booking.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                onClick={() => router.push(`/ticket/${booking.id}`)}
-                className="glass-panel p-6 cursor-pointer group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex items-center justify-between"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-violet-500/0 to-cyan-500/0 group-hover:from-violet-500/5 group-hover:to-cyan-500/5 transition-colors duration-500"></div>
-                
-                <div className="relative z-10 flex items-center space-x-4">
-                  <div className="w-14 h-14 rounded-2xl bg-foreground/5 flex items-center justify-center text-foreground font-bold text-xl border border-foreground/10">
-                    <Store size={24} className="opacity-50" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">{booking.shopData?.name || 'Unknown Shop'}</h3>
-                    <div className="flex items-center text-sm text-foreground-muted space-x-2">
-                       <span className="bg-foreground/10 px-2 py-0.5 rounded text-xs text-foreground font-medium">Token #{booking.tokenNumber}</span>
-                       <span>•</span>
-                       <span className={`capitalize font-medium ${
-                         booking.status === 'serving' ? 'text-cyan-500' : 
-                         booking.status === 'completed' ? 'text-green-500' : 'text-yellow-500'
-                       }`}>
-                         {booking.status}
-                       </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="text-foreground-muted group-hover:text-foreground transition-colors relative z-10 w-10 h-10 flex items-center justify-center rounded-full bg-foreground/5 group-hover:bg-foreground group-hover:text-background">
-                  <Ticket size={18} />
-                </div>
-              </motion.div>
+                booking={booking}
+                idx={idx}
+                onEdit={setSelectedBooking}
+                onDelete={setBookingToDelete}
+              />
             ))}
           </div>
         )}
       </main>
+
+      {/* Edit/Reschedule Modal */}
+      <ManageBookingModal 
+        booking={selectedBooking}
+        onClose={() => setSelectedBooking(null)}
+        onReschedule={handleReschedule}
+        loading={actionLoading}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteBookingModal 
+        booking={bookingToDelete}
+        onClose={() => setBookingToDelete(null)}
+        onConfirm={handleCancel}
+        loading={actionLoading}
+      />
     </div>
   );
 }

@@ -6,7 +6,9 @@ import {
   query, 
   where,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  doc,
+  getDoc
 } from "firebase/firestore";
 
 // --- Types ---
@@ -81,4 +83,52 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
   };
   const docRef = await addDoc(collection(db, BOOKINGS_COL), data);
   return docRef.id;
+};
+
+export const cancelBooking = async (bookingId: string, shopId: string, slotId: string, isWaitlist: boolean) => {
+  const { doc, deleteDoc, updateDoc, increment } = await import('firebase/firestore');
+  
+  // Delete the booking doc
+  await deleteDoc(doc(db, BOOKINGS_COL, bookingId));
+  
+  // Update the slot counts
+  const slotRef = doc(db, `${SHOPS_COL}/${shopId}/slots`, slotId);
+  try {
+    await updateDoc(slotRef, {
+      currentBookings: isWaitlist ? increment(0) : increment(-1),
+      waitlistCount: isWaitlist ? increment(-1) : increment(0)
+    });
+  } catch (error) {
+    console.error("Error updating slot counts during cancellation:", error);
+    // Even if slot update fails (e.g. slot doc deleted), we already deleted the booking
+  }
+};
+
+export const getUserBookingsWithDetails = async (userId: string) => {
+  const q = query(collection(db, BOOKINGS_COL), where('userId', '==', userId));
+  const querySnapshot = await getDocs(q);
+  const userBookings = querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  })) as Booking[];
+
+  const bookingsWithDetails = await Promise.all(userBookings.map(async (booking) => {
+    try {
+      const [shopDoc, slotDoc] = await Promise.all([
+        booking.shopId ? getDoc(doc(db, SHOPS_COL, booking.shopId)) : Promise.resolve(null),
+        (booking.shopId && booking.slotId) ? getDoc(doc(db, `${SHOPS_COL}/${booking.shopId}/slots`, booking.slotId)) : Promise.resolve(null)
+      ]);
+
+      return {
+        ...booking,
+        shopData: shopDoc?.exists() ? { id: shopDoc.id, ...shopDoc.data() } as Shop : undefined,
+        slotData: slotDoc?.exists() ? { id: slotDoc.id, ...slotDoc.data() } as Slot : undefined
+      };
+    } catch (err) {
+      console.error("Failed fetching details for booking", booking.id, err);
+      return booking;
+    }
+  }));
+
+  return bookingsWithDetails as (Booking & { shopData?: Shop; slotData?: Slot })[];
 };
