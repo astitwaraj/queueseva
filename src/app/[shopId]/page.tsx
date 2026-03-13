@@ -81,6 +81,29 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
   
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
+  // Determine slot state
+  const getSlotState = (time: string) => {
+    const slotData = dbSlots[time];
+    if (slotData && slotData.id && userBookings.has(slotData.id)) return 'already_booked';
+    if (!slotData) return 'available'; // No bookings yet
+    if (shop && slotData.currentBookings >= shop.maxCapacity) return 'full';
+    return 'available';
+  };
+
+  const isSelectedFull = selectedTime ? getSlotState(selectedTime) === 'full' : false;
+
+  // Prevent UI flickering: if we are currently booking, keep the view that was active
+  // when the user clicked the button.
+  const [lastSelectedFullState, setLastSelectedFullState] = useState(false);
+  
+  useEffect(() => {
+    if (!bookingLoading) {
+      setLastSelectedFullState(isSelectedFull);
+    }
+  }, [isSelectedFull, bookingLoading]);
+
+  const displayAsFull = bookingLoading ? lastSelectedFullState : isSelectedFull;
+
   useEffect(() => {
     if (toastMessage) {
       const timer = setTimeout(() => setToastMessage(null), 3000);
@@ -236,17 +259,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
 
   const generatedTimeSlots = generateTimeSlots(shop.slotDuration);
 
-  // Determine slot state
-  const getSlotState = (time: string) => {
-    const slotData = dbSlots[time];
-    if (slotData && slotData.id && userBookings.has(slotData.id)) return 'already_booked';
-    if (!slotData) return 'available'; // No bookings yet
-    if (slotData.currentBookings >= shop.maxCapacity) return 'full';
-    return 'available';
-  };
-
   const selectedSlotData = selectedTime ? dbSlots[selectedTime] : null;
-  const isSelectedFull = selectedTime ? getSlotState(selectedTime) === 'full' : false;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
@@ -399,20 +412,20 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
               ) : (
                 <div className="space-y-4">
                   <div className={`p-4 rounded-2xl border transition-all ${
-                    isSelectedFull ? 'border-yellow-500/20 bg-yellow-500/5 text-yellow-500' : 'border-cyan-500/20 bg-cyan-500/5 text-cyan-500'
+                    displayAsFull ? 'border-yellow-500/20 bg-yellow-500/5 text-yellow-500' : 'border-cyan-500/20 bg-cyan-500/5 text-cyan-500'
                   }`}>
                     <p className="text-xs font-bold uppercase tracking-wider mb-1">
-                      {isSelectedFull ? 'Low Availability' : 'High Availability'}
+                      {displayAsFull ? 'Low Availability' : 'High Availability'}
                     </p>
                     <p className="text-sm leading-relaxed text-foreground-muted">
-                      {isSelectedFull 
+                      {displayAsFull 
                         ? 'This slot is currently at max capacity. You can join the waitlist for a chance to be served.' 
                         : 'Great choice! This slot is available for an immediate confirmed booking.'}
                     </p>
                   </div>
 
                   <div className="pt-4">
-                    {isSelectedFull ? (
+                    {displayAsFull ? (
                       <WaitlistAction
                         waitlistCount={selectedSlotData?.waitlistCount || 0} 
                         maxCapacity={shop.maxCapacity}
