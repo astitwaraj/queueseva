@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogOut, User, Settings, ChevronDown, Store } from 'lucide-react';
+import { LogOut, User, Settings, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logoutUser } from '@/lib/firebase/auth';
 import { useAuth } from '@/contexts/AuthContext';
@@ -41,28 +41,21 @@ export default function VendorNavbar({ shop, onShopUpdate }: VendorNavbarProps) 
       <header className="border-b border-foreground/5 bg-background/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div 
-            className="flex items-center cursor-pointer space-x-3" 
+            className="flex items-center cursor-pointer" 
             onClick={() => router.push('/vendor/dashboard')}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center text-white font-bold shadow-glow-cyan/20">
-              {shop?.name?.charAt(0) || <Store size={18} />}
-            </div>
-            <div className="font-bold text-xl tracking-tight hidden md:block">
-              {shop?.name || "Queue Seva"} <span className="text-cyan-500 font-medium text-sm ml-1 opacity-80">Vendor</span>
+            <div className="font-bold text-xl tracking-tight">
+              Queue Seva <span className="text-cyan-500">Vendor</span>
             </div>
           </div>
 
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center space-x-2 p-1.5 rounded-xl hover:bg-foreground/5 transition-all border border-transparent hover:border-foreground/10 group"
+              className="flex items-center space-x-2 p-1 rounded-full hover:bg-foreground/5 transition-colors border border-transparent hover:border-foreground/10"
             >
-              <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center text-foreground-muted group-hover:text-cyan-500 transition-colors">
-                <User size={18} />
-              </div>
-              <div className="hidden sm:block text-left mr-1">
-                <p className="text-xs font-bold leading-none">{user?.displayName || 'Vendor Account'}</p>
-                <p className="text-[10px] text-foreground-muted truncate max-w-[100px]">{user?.email}</p>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center text-black font-bold text-xs ring-2 ring-cyan-500/20">
+                {user?.email?.charAt(0).toUpperCase() || <User size={16} />}
               </div>
               <ChevronDown size={14} className={`text-foreground-muted transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -79,21 +72,20 @@ export default function VendorNavbar({ shop, onShopUpdate }: VendorNavbarProps) 
                     <p className="text-xs font-bold text-foreground">Logged in as</p>
                     <p className="text-xs text-foreground-muted truncate mt-0.5">{user?.email}</p>
                   </div>
-                  <div className="p-1.5">
+                  <div className="p-1">
                     <button
                       onClick={() => {
                         setIsProfileModalOpen(true);
                         setIsDropdownOpen(false);
                       }}
-                      className="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl hover:bg-cyan-500/10 hover:text-cyan-500 transition-all group"
+                      className="w-full flex items-center px-3 py-2 text-sm rounded-lg hover:bg-cyan-500/10 hover:text-cyan-500 transition-colors group"
                     >
                       <Settings size={16} className="mr-3 text-foreground-muted group-hover:text-cyan-500 transition-colors" />
                       Settings
                     </button>
-                    <div className="h-px bg-border my-1.5 mx-2" />
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl hover:bg-red-500/10 hover:text-red-500 transition-all group text-foreground/80"
+                      className="w-full flex items-center px-3 py-2 text-sm rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-colors group text-foreground/80"
                     >
                       <LogOut size={16} className="mr-3 text-foreground-muted group-hover:text-red-500 transition-colors" />
                       Sign Out

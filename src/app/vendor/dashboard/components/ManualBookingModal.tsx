@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, UserPlus, Phone, User, Clock, Loader2 } from 'lucide-react';
 import { vendorService } from '@/services/vendorService';
 import { Slot } from '@/lib/firebase/db';
+import { formatDateLocal } from '@/lib/utils/slot-utils';
 
 interface ManualBookingModalProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ export default function ManualBookingModal({ isOpen, onClose, shopId, onSuccess 
       const fetchSlots = async () => {
         setLoading(true);
         try {
-          const today = new Date().toISOString().split('T')[0];
+          const today = formatDateLocal(new Date());
           const availableSlots = await vendorService.getAvailableSlots(shopId, today);
           setSlots(availableSlots.sort((a,b) => a.startTime.localeCompare(b.startTime)));
           // Select first available slot by default

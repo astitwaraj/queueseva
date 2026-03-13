@@ -7,7 +7,7 @@ interface TimeSlotGridProps {
   timeSlots: string[];
   selectedTime: string | null;
   onSelectTime: (time: string) => void;
-  getSlotState: (time: string) => 'already_booked' | 'available' | 'full';
+  getSlotState: (time: string) => 'already_booked' | 'available' | 'full' | 'past';
   onShowToast: (message: string) => void;
 }
 
@@ -38,9 +38,14 @@ export default function TimeSlotGrid({
                   onShowToast("You have already booked this slot!");
                   return;
                 }
+                if (state === 'past') {
+                  onShowToast("This slot is in the past!");
+                  return;
+                }
                 onSelectTime(time);
               }}
               className={`relative py-4 px-2 rounded-xl border text-sm font-bold transition-all text-center flex flex-col items-center justify-center min-h-[70px] ${
+                state === 'past' ? 'border-border bg-foreground/5 text-foreground/20 cursor-not-allowed grayscale' :
                 state === 'already_booked' ? 'border-red-500/30 bg-red-500/5 text-red-500/50 cursor-not-allowed opacity-60' :
                 isSelected ? (state === 'full' ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500 shadow-glow-yellow' : 'border-cyan-500 bg-cyan-500/10 text-cyan-500 shadow-glow-cyan') :
                 state === 'full' ? 'border-yellow-500/20 bg-card text-yellow-500/70 hover:border-yellow-500/50' :

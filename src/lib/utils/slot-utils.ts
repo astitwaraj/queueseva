@@ -1,3 +1,11 @@
+// Utility to format date to YYYY-MM-DD in local time
+export const formatDateLocal = (date: Date) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 // Utility to generate days for the horizontal picker
 export const generateDays = (numDays: number) => {
   const days = [];
@@ -5,7 +13,7 @@ export const generateDays = (numDays: number) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
     days.push({
-      dateStr: d.toISOString().split('T')[0],
+      dateStr: formatDateLocal(d),
       dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
       dayNumber: d.getDate(),
       monthName: d.toLocaleDateString('en-US', { month: 'short' })

@@ -36,7 +36,10 @@ export default function BookingSummaryCard({
             <span className="text-sm font-medium">Date</span>
           </div>
           <span className="text-sm font-bold text-foreground">
-            {new Date(selectedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+            {(() => {
+              const [y, m, d] = selectedDate.split('-').map(Number);
+              return new Date(y, m - 1, d).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+            })()}
           </span>
         </div>
 

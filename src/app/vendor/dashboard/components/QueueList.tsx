@@ -86,7 +86,7 @@ export default function QueueList({
                       {booking.slotData && (
                         <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground-muted">
                           <Clock size={12} className="text-cyan-500" />
-                          <span>Slot: {booking.slotData.startTime}</span>
+                          <span>{booking.slotData.date} | {booking.slotData.startTime}</span>
                         </div>
                       )}
                       

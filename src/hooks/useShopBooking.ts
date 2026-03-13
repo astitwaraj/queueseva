@@ -6,7 +6,7 @@ import { doc, getDoc, collection, query, where, onSnapshot, runTransaction } fro
 import { db } from '@/lib/firebase/config';
 import { Shop, Slot, Booking, createBooking, getUserProfile, createSlot } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
-import { generateDays, generateTokenNumber } from '@/lib/utils/slot-utils';
+import { generateDays, generateTokenNumber, formatDateLocal } from '@/lib/utils/slot-utils';
 
 export function useShopBooking(shopId: string) {
   const { user, loading: authLoading } = useAuth();
@@ -89,6 +89,16 @@ export function useShopBooking(shopId: string) {
   }, [shopId, selectedDate, user]);
 
   const getSlotState = (time: string) => {
+    // Check if slot is in the past for today
+    const today = formatDateLocal(new Date());
+    if (selectedDate === today) {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      const [h, m] = time.split(':').map(Number);
+      const slotMinutes = h * 60 + m;
+      if (slotMinutes < currentMinutes) return 'past';
+    }
+
     const slotData = dbSlots[time];
     if (slotData && slotData.id && userBookings.has(slotData.id)) return 'already_booked';
     if (!slotData) return 'available'; // No bookings yet

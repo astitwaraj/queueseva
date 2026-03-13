@@ -3,6 +3,7 @@ import { vendorService } from '@/services/vendorService';
 import { Booking, Shop, getShopByOwner, Slot } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { formatDateLocal } from '@/lib/utils/slot-utils';
 
 export type EnhancedBooking = Booking & { slotData?: Slot };
 
@@ -106,6 +107,47 @@ export function useVendorDashboard() {
        }
     }
   };
+
+  // Auto mark no-shows for expired slots
+  useEffect(() => {
+    if (bookings.length === 0 || !shop) return;
+
+    const autoMarkNoShows = async () => {
+      const todayStr = formatDateLocal(new Date());
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      for (const booking of bookings) {
+        if (booking.status !== 'waiting') continue; // Only auto mark waiting ones
+        if (!booking.slotData) continue;
+
+        let shouldMark = false;
+        
+        // If booking date is before today
+        if (booking.slotData.date < todayStr) {
+          shouldMark = true;
+        } 
+        // If booking date is today but time is way past (e.g., 30 mins grace)
+        else if (booking.slotData.date === todayStr) {
+          const [h, m] = booking.slotData.startTime.split(':').map(Number);
+          const slotMinutes = h * 60 + m;
+          if (currentMinutes > slotMinutes + 30) {
+            shouldMark = true;
+          }
+        }
+
+        if (shouldMark) {
+          console.log(`Auto-marking booking ${booking.id} as no-show`);
+          await vendorService.markNoShow(booking.id!, "Automated: Appointment time passed");
+        }
+      }
+    };
+
+    // Run once on initial load and then every 5 minutes
+    autoMarkNoShows();
+    const interval = setInterval(autoMarkNoShows, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [bookings, shop]);
 
   return {
     user,

@@ -50,15 +50,16 @@ export default function BookingCard({ booking, idx, onEdit, onDelete }: BookingC
                    </div>
                 )}
                 <div className="flex-grow md:w-0" />
-               <span className={`capitalize font-medium px-2 py-0.5 rounded-md ${
-                 booking.status === 'serving' ? 'bg-cyan-500/10 text-cyan-400' : 
-                 booking.status === 'completed' ? 'bg-green-500/10 text-green-400' : 
-                 booking.isWaitlist ? 'bg-yellow-500/10 text-yellow-400' : 'bg-emerald-500/10 text-emerald-400'
-               }`}>
-                 {booking.status === 'waiting' 
-                   ? (booking.isWaitlist ? `WL #${booking.waitlistNumber}` : 'Confirmed') 
-                   : booking.status}
-               </span>
+                <span className={`capitalize font-medium px-2 py-0.5 rounded-md ${
+                  booking.status === 'serving' ? 'bg-cyan-500/10 text-cyan-400' : 
+                  booking.status === 'completed' ? 'bg-indigo-500/10 text-indigo-400' : 
+                  booking.status === 'no-show' ? 'bg-red-500/10 text-red-400' :
+                  booking.isWaitlist ? 'bg-yellow-500/10 text-yellow-500' : 'bg-green-500/10 text-green-500'
+                }`}>
+                  {booking.status === 'waiting' 
+                    ? (booking.isWaitlist ? `WL #${booking.waitlistNumber}` : 'Confirmed') 
+                    : booking.status}
+                </span>
             </div>
           </div>
         </div>

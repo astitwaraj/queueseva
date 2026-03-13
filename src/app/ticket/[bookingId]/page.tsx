@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase/config';
 import { Booking, Shop, Slot } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { QrCode, ArrowLeft, Loader2, CheckCircle, Clock as ClockIcon, Calendar } from 'lucide-react';
+import { QrCode, ArrowLeft, Loader2, CheckCircle, Clock as ClockIcon, Calendar, UserX } from 'lucide-react';
 import { formatSlotDate, formatSlotTime } from '@/lib/utils/formatters';
 
 export default function TicketView({ params }: { params: { bookingId: string } }) {
@@ -74,7 +74,13 @@ export default function TicketView({ params }: { params: { bookingId: string } }
 
   const isServing = booking.status === 'serving';
   const isCompleted = booking.status === 'completed';
-  const statusColor = isServing ? 'from-cyan-500 to-violet-500' : 'from-foreground/20 to-foreground/10';
+  const isNoShow = booking.status === 'no-show';
+  
+  const statusColor = 
+    isServing ? 'from-cyan-500 to-violet-500' : 
+    isCompleted ? 'from-indigo-500 to-blue-500' :
+    isNoShow ? 'from-red-500 to-rose-500' :
+    booking.isWaitlist ? 'from-yellow-500 to-amber-500' : 'from-green-500 to-emerald-500';
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8 flex flex-col items-center justify-center relative overflow-hidden">
@@ -86,7 +92,10 @@ export default function TicketView({ params }: { params: { bookingId: string } }
         }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full mix-blend-screen filter blur-[150px] ${
-          isServing ? 'bg-cyan-500' : isCompleted ? 'bg-green-500' : 'bg-foreground/20'
+          isServing ? 'bg-cyan-500' : 
+          isCompleted ? 'bg-indigo-500' : 
+          isNoShow ? 'bg-red-500' :
+          booking.isWaitlist ? 'bg-yellow-500' : 'bg-green-500'
         }`}
       />
 
@@ -109,8 +118,10 @@ export default function TicketView({ params }: { params: { bookingId: string } }
             transition={{ type: "spring", bounce: 0.4, duration: 0.8 }}
             className={`glass-panel overflow-hidden relative border-t-4 ${
               isServing ? 'border-t-cyan-500 shadow-glow-cyan' : 
-              isCompleted ? 'border-t-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]' :
-              'border-t-transparent'
+              isCompleted ? 'border-t-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.3)]' :
+              isNoShow ? 'border-t-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)]' :
+              booking.isWaitlist ? 'border-t-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.2)]' :
+              'border-t-green-500 shadow-[0_0_30px_rgba(34,197,94,0.2)]'
             }`}
           >
             {/* Ticket Header Image Pattern */}
@@ -143,24 +154,25 @@ export default function TicketView({ params }: { params: { bookingId: string } }
               <div className="w-full p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-center space-x-4 mb-6">
                 {isServing ? (
                   <>
-                    <motion.div 
-                      animate={{ scale: [1, 1.2, 1] }} 
-                      transition={{ repeat: Infinity, duration: 2 }}
-                    />
-                      <ClockIcon className="text-cyan-500" size={24} />
-                    <span className="font-bold text-lg text-cyan-500">Its your turn!</span>
+                    <ClockIcon className="text-cyan-500" size={24} />
+                    <span className="font-bold text-lg text-cyan-500 text-center">It&apos;s your turn! Please proceed.</span>
                   </>
                 ) : isCompleted ? (
                   <>
-                    <CheckCircle className="text-green-500" size={24} />
-                    <span className="font-bold text-lg text-green-500">Service Completed</span>
+                    <CheckCircle className="text-indigo-500" size={24} />
+                    <span className="font-bold text-lg text-indigo-500">Service Completed</span>
+                  </>
+                ) : isNoShow ? (
+                  <>
+                    <UserX className="text-red-500" size={24} />
+                    <span className="font-bold text-lg text-red-500">Marked as No-Show</span>
                   </>
                 ) : (
                   <>
-                    <div className={`w-3 h-3 rounded-full animate-pulse ${booking.isWaitlist ? 'bg-yellow-500' : 'bg-emerald-500'}`} />
-                    <span className="font-semibold text-lg text-foreground/80 text-center">
+                    <div className={`w-3 h-3 rounded-full animate-pulse ${booking.isWaitlist ? 'bg-yellow-500' : 'bg-green-500'}`} />
+                    <span className={`font-semibold text-lg text-center ${booking.isWaitlist ? 'text-yellow-600' : 'text-green-600'}`}>
                       {booking.isWaitlist 
-                        ? (booking.waitlistNumber ? `Joined Waitlist #${booking.waitlistNumber}` : 'On Waitlist') 
+                        ? (booking.waitlistNumber ? `Waitlist Sequence #${booking.waitlistNumber}` : 'On Waitlist') 
                         : 'Booking Confirmed'}
                     </span>
                   </>
