@@ -24,6 +24,11 @@ export interface Shop {
   slotDuration: number; // in minutes
   maxCapacity: number;
   avgCancellationRate: number;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  shopNumber: string;
 }
 
 export interface Slot {
