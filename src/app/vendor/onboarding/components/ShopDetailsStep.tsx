@@ -1,9 +1,9 @@
-'use client';
-
-import { Store, Hash, Tag, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Store, Hash, Tag, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FormDropdown } from './FormDropdown';
 import { CATEGORIES } from '../constants';
+import { checkShopNumberUnique } from '@/lib/firebase/db';
 
 import { OnboardingData } from '../hooks/useOnboardingForm';
 
@@ -14,7 +14,29 @@ interface ShopDetailsStepProps {
 }
 
 export function ShopDetailsStep({ formData, updateField, onNext }: ShopDetailsStepProps) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const isComplete = formData.name && formData.category && formData.shopNumber;
+
+  const handleNext = async () => {
+    if (!isComplete) return;
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const isUnique = await checkShopNumberUnique(formData.shopNumber);
+      if (isUnique) {
+        onNext();
+      } else {
+        setError('This Shop Number is already registered. Please use a unique identifier.');
+      }
+    } catch (err) {
+      console.error('Error validating shop number:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -31,7 +53,7 @@ export function ShopDetailsStep({ formData, updateField, onNext }: ShopDetailsSt
             type="text"
             value={formData.name}
             onChange={(e) => updateField('name', e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl border border-foreground/10 bg-background-card text-foreground focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all text-base"
+            className="w-full pl-12 pr-4 py-3 rounded-xl border border-foreground/10 bg-black/40 text-foreground focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all text-base placeholder:text-foreground-muted/50"
             placeholder="e.g. Apollo Hospital Clinic"
             autoFocus
           />
@@ -39,18 +61,36 @@ export function ShopDetailsStep({ formData, updateField, onNext }: ShopDetailsSt
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs font-bold uppercase tracking-wider text-foreground/60 ml-1">Shop Number / identifier</label>
+        <label className="block text-xs font-bold uppercase tracking-wider text-foreground/60 ml-1">Shop No. / identifier</label>
         <div className="relative group">
           <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground-muted group-focus-within:text-cyan-500 transition-colors" size={20} />
           <input
             type="text"
             value={formData.shopNumber}
-            onChange={(e) => updateField('shopNumber', e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl border border-foreground/10 bg-background-card text-foreground focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all text-base"
-            placeholder="e.g. Shop #24 or Ground Floor"
+            onChange={(e) => {
+              updateField('shopNumber', e.target.value);
+              if (error) setError(null);
+            }}
+            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all text-base placeholder:text-foreground-muted/50 bg-black/40 ${
+              error ? 'border-red-500 ring-2 ring-red-500/20' : 'border-foreground/10 focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none'
+            }`}
+            placeholder="e.g. 24 or Ground Floor"
           />
         </div>
-        <p className="text-xs text-foreground-muted font-medium ml-1">Helps customers distinguish between shops with similar names.</p>
+        <AnimatePresence>
+          {error && (
+            <motion.p 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-xs text-red-500 font-medium flex items-center gap-1.5 ml-1"
+            >
+              <AlertCircle size={12} />
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
+        {!error && <p className="text-xs text-foreground-muted font-medium ml-1">Helps customers distinguish between shops with similar names.</p>}
       </div>
 
       <FormDropdown
@@ -64,12 +104,18 @@ export function ShopDetailsStep({ formData, updateField, onNext }: ShopDetailsSt
 
       <div className="pt-4 flex justify-end">
         <button
-          disabled={!isComplete}
-          onClick={onNext}
-          className="flex items-center space-x-2 bg-foreground text-background py-3.5 px-8 rounded-xl font-bold hover:bg-foreground/90 transition-all disabled:opacity-50 disabled:grayscale group shadow-lg"
+          disabled={!isComplete || loading}
+          onClick={handleNext}
+          className="flex items-center space-x-2 bg-foreground text-background py-3.5 px-8 rounded-xl font-bold hover:bg-foreground/90 transition-all disabled:opacity-50 disabled:grayscale group shadow-lg min-w-[140px] justify-center"
         >
-          <span>Continue</span>
-          <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
+          {loading ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <>
+              <span>Continue</span>
+              <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
+            </>
+          )}
         </button>
       </div>
     </motion.div>

@@ -228,11 +228,23 @@ export default function CustomerLanding() {
                           </span>
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg mb-0.5 group-hover:text-cyan-500 transition-colors">{shop.name}</h3>
-                          <div className="flex items-center space-x-2">
-                            <span className="px-2 py-0.5 rounded-md bg-cyan-500/10 text-[10px] text-cyan-500 font-bold uppercase tracking-wider border border-cyan-500/20">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <h3 className="font-bold text-lg group-hover:text-cyan-500 transition-colors">{shop.name}</h3>
+                            {shop.shopNumber && (
+                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/10 text-[9px] text-amber-500 font-bold uppercase tracking-wider border border-amber-500/20">
+                                Shop No. {shop.shopNumber}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-col space-y-1">
+                            <span className="inline-block self-start px-2 py-0.5 rounded-md bg-cyan-500/10 text-[10px] text-cyan-500 font-bold uppercase tracking-wider border border-cyan-500/20">
                               {shop.category}
                             </span>
+                            {shop.address && (
+                              <p className="text-[10px] text-foreground-muted line-clamp-1">
+                                {shop.address}, {shop.city}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>

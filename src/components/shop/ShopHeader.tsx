@@ -21,27 +21,34 @@ export default function ShopHeader({ shop }: ShopHeaderProps) {
           <ArrowLeft size={16} className="mr-2" />
           Back
         </button>
-        <div className="flex flex-col md:flex-row md:items-end md:gap-4">
-          <h1 className="text-4xl font-bold tracking-tight">{shop.name}</h1>
-          <div className="flex items-center gap-2 mt-2 md:mt-0 md:mb-1">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-3">
+            <h1 className="text-4xl font-black tracking-tight text-foreground">{shop.name}</h1>
             {shop.shopNumber && (
-              <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-[10px] text-amber-500 font-bold uppercase tracking-wider border border-amber-500/20">
-                {shop.shopNumber}
+              <span className="px-2 py-1 rounded-md bg-amber-500/10 text-[10px] text-amber-500 font-black uppercase tracking-widest border border-amber-500/20 shadow-sm">
+                Shop No. {shop.shopNumber}
               </span>
             )}
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-3 mt-3">
             <span className="px-2 py-0.5 rounded-md bg-cyan-500/10 text-[10px] text-cyan-500 font-bold uppercase tracking-wider border border-cyan-500/20">
               {shop.category}
             </span>
-            <span className="flex items-center text-foreground-muted text-xs">
-              <Clock size={12} className="mr-1" />
+            <div className="h-4 w-px bg-foreground/10" />
+            <span className="flex items-center text-foreground-muted text-[11px] font-medium uppercase tracking-wider">
+              <Clock size={12} className="mr-1.5 text-cyan-500" />
               {shop.slotDuration} min / session
             </span>
           </div>
         </div>
+
         {shop.address && (
-          <div className="flex items-center text-foreground-muted text-sm mt-3 font-medium">
-            <MapPin size={14} className="mr-1.5 text-cyan-500" />
-            <span>{shop.address}, {shop.city}, {shop.state} {shop.zipCode}</span>
+          <div className="flex items-center text-foreground-muted text-[13px] mt-4 font-medium max-w-2xl leading-relaxed">
+            <MapPin size={14} className="mr-2 text-cyan-500 flex-shrink-0" />
+            <span className="opacity-80">
+              {shop.address}, <span className="text-foreground/60">{shop.city}, {shop.state} {shop.zipCode}</span>
+            </span>
           </div>
         )}
       </div>

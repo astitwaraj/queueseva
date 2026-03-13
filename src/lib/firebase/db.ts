@@ -86,6 +86,12 @@ export const getShopByOwner = async (ownerId: string) => {
   return null;
 };
 
+export const checkShopNumberUnique = async (shopNumber: string) => {
+  const q = query(collection(db, SHOPS_COL), where("shopNumber", "==", shopNumber));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.empty;
+};
+
 // Slots
 export const createSlot = async (shopId: string, slotData: Omit<Slot, 'id'>) => {
   const docRef = await addDoc(collection(db, `${SHOPS_COL}/${shopId}/slots`), slotData);
