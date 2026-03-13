@@ -48,7 +48,7 @@ export interface Booking {
   shopId: string;
   slotId: string;
   tokenNumber: number;
-  status: 'waiting' | 'serving' | 'completed' | 'cancelled';
+  status: 'waiting' | 'serving' | 'completed' | 'cancelled' | 'no-show';
   createdAt: Timestamp; // Firestore Timestamp
   isWaitlist: boolean;
   waitlistNumber?: number; // 0 for confirmed, 1+ for waitlist
@@ -56,6 +56,8 @@ export interface Booking {
   userEmail?: string;
   userPhone?: string;
   showContactToVendor?: boolean;
+  cancellationReason?: string;
+  vendorNotes?: string;
 }
 
 export interface UserProfile {

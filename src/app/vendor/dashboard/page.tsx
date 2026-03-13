@@ -1,275 +1,102 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { getShopByOwner, Booking, Shop } from '@/lib/firebase/db';
-import { db } from '@/lib/firebase/config';
-import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
-import { Play, LogOut, Loader2, ArrowRightCircle, Search, Calendar, Users } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import VendorNavbar from '@/components/layout/VendorNavbar';
+import { useVendorDashboard, EnhancedBooking } from './hooks/useVendorDashboard';
+import ServingNowCard from './components/ServingNowCard';
+import StatsOverview from './components/StatsOverview';
+import QueueList from './components/QueueList';
+import NoShowModal from './components/NoShowModal';
+import ManualBookingModal from './components/ManualBookingModal';
 
 export default function VendorDashboard() {
-  const { user, loading: authLoading } = useAuth();
-  const router = useRouter();
-  
-  const [shop, setShop] = useState<Shop | null>(null);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    shop,
+    setShop,
+    currentlyServing,
+    waitingList,
+    stats,
+    loading,
+    searchQuery,
+    setSearchQuery,
+    handleAdvanceQueue,
+    handleStartServing,
+    handleNoShow
+  } = useVendorDashboard();
 
-  // Protected route logic
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/vendor/login');
-    }
-  }, [user, authLoading, router]);
+  const [noShowBooking, setNoShowBooking] = useState<EnhancedBooking | null>(null);
+  const [isManualBookingOpen, setIsManualBookingOpen] = useState(false);
 
-  // Load Shop details & Real-time Bookings listeners
-  useEffect(() => {
-    if (!user) return;
-
-    const loadDashboard = async () => {
-      const shopData = await getShopByOwner(user.uid);
-      if (!shopData) {
-        // If they registered but haven't onboarded, send them to onboarding
-        router.push('/vendor/onboarding');
-        return;
-      }
-      setShop(shopData);
-
-      // Listen to bookings for this shop today
-      const q = query(
-        collection(db, 'bookings'),
-        where('shopId', '==', shopData.id),
-        // orderBy('tokenNumber', 'asc') // Note: requires composite index in real DB usually
-      );
-
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const bookingsList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Booking[];
-        
-        // Sort in client to avoid firestore index complexites for this demo
-        bookingsList.sort((a, b) => a.tokenNumber - b.tokenNumber);
-        setBookings(bookingsList);
-        setLoading(false);
-      }, (err) => {
-        console.error("Error fetching bookings:", err);
-        setLoading(false);
-      });
-
-      return () => unsubscribe();
-    };
-
-    loadDashboard();
-  }, [user, router]);
-
-  const advanceQueue = async (bookingId: string) => {
-    try {
-      await updateDoc(doc(db, 'bookings', bookingId), {
-        status: 'completed'
-      });
-      
-      // Auto-set the next waiting person to 'serving'
-      const nextWaiting = bookings.find(b => b.status === 'waiting' && b.id !== bookingId);
-      if (nextWaiting && nextWaiting.id) {
-        await updateDoc(doc(db, 'bookings', nextWaiting.id), {
-          status: 'serving'
-        });
-      }
-    } catch (error) {
-      console.error("Error advancing queue", error);
-    }
-  };
-
-  const startServing = async (bookingId: string) => {
-    try {
-      await updateDoc(doc(db, 'bookings', bookingId), {
-        status: 'serving'
-      });
-    } catch (error) {
-      console.error("Error starting service", error);
-    }
-  };
-
-  if (loading || authLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-cyan-500" size={32} />
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-cyan-500" size={48} />
+          <p className="text-foreground-muted font-medium animate-pulse">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
-
-  const currentlyServing = bookings.find(b => b.status === 'serving');
-  const waitingList = bookings.filter(b => b.status === 'waiting');
 
   return (
     <div className="min-h-screen bg-background">
       <VendorNavbar shop={shop} onShopUpdate={(updatedShop) => setShop(updatedShop)} />
 
-      <main className="max-w-7xl mx-auto p-6 md:p-8 space-y-8">
-        {/* Bento Box Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <main className="max-w-7xl mx-auto p-6 md:p-8 space-y-8 pb-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Vendor Dashboard</h1>
+            <p className="text-foreground-muted">Manage your queue and customers in real-time</p>
+          </div>
+        </div>
+
+        {/* Top Section: Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <ServingNowCard 
+            currentlyServing={currentlyServing}
+            waitingList={waitingList}
+            onAdvance={handleAdvanceQueue}
+            onStart={handleStartServing}
+            onNoShow={(b) => setNoShowBooking(b)}
+          />
           
-          {/* Serving Now Controller (Main Panel) */}
-          <div className="md:col-span-2 glass-panel p-8 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-violet-500/5 z-0"></div>
-            <div className="absolute w-64 h-64 bg-cyan-500/20 rounded-full blur-[80px] -top-10 -right-10 pointer-events-none group-hover:bg-cyan-500/30 transition-all duration-700"></div>
-            
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div className="flex justify-between items-start mb-8">
-                <div>
-                  <h2 className="text-xl font-semibold mb-1">Serving Now</h2>
-                  <p className="text-sm text-foreground-muted">Live queue controller</p>
-                </div>
-                <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-600 text-sm font-medium border border-cyan-500/20">
-                  <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-                  <span>Live Sync</span>
-                </div>
-              </div>
-
-              {currentlyServing ? (
-                <motion.div 
-                  key="serving-active"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col items-center justify-center py-6"
-                >
-                  <div className="text-8xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-cyan-500 to-violet-500 mb-2 drop-shadow-xl">
-                    #{currentlyServing.tokenNumber}
-                  </div>
-                  
-                  <div className="mb-6 text-center">
-                    <p className="text-2xl font-bold text-foreground">{currentlyServing.userName || 'Customer'}</p>
-                    {currentlyServing.showContactToVendor && currentlyServing.userPhone && (
-                      <p className="text-cyan-500 font-medium">{currentlyServing.userPhone}</p>
-                    )}
-                  </div>
-                  
-                  <button 
-                    onClick={() => advanceQueue(currentlyServing.id!)}
-                    className="flex items-center space-x-3 bg-foreground text-background py-4 px-8 rounded-full font-semibold text-lg hover:shadow-glow-cyan transition-all hover:-translate-y-1 w-full max-w-sm justify-center group/btn"
-                  >
-                    <span>Next Customer</span>
-                    <ArrowRightCircle className="group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-                </motion.div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 flex-1">
-                  <div className="w-20 h-20 rounded-full bg-foreground/5 flex items-center justify-center mb-4">
-                    <LogOut className="text-foreground-muted" size={32} />
-                  </div>
-                  <p className="text-foreground-muted text-lg text-center max-w-sm mb-6">
-                    No active ticket. Call the next person in line to begin service.
-                  </p>
-                  <button
-                    onClick={() => waitingList[0]?.id && startServing(waitingList[0].id)}
-                    disabled={waitingList.length === 0}
-                    className="flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white py-3 px-6 rounded-xl font-medium hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Play size={18} fill="currentColor" />
-                    <span>Start Queue</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Stats & Quick Info */}
-          <div className="space-y-6 flex flex-col">
-            <div className="glass-panel p-6 flex-1 flex flex-col justify-center">
-              <div className="flex items-center space-x-4">
-                <div className="p-4 bg-violet-500/10 rounded-2xl text-violet-500">
-                  <Users size={28} />
-                </div>
-                <div>
-                  <p className="text-sm text-foreground-muted font-medium">Waiting List</p>
-                  <h3 className="text-3xl font-bold">{waitingList.length}</h3>
-                </div>
-              </div>
-            </div>
-            
-            <div className="glass-panel p-6 flex-1 flex flex-col justify-center">
-              <div className="flex items-center space-x-4">
-                <div className="p-4 bg-cyan-500/10 rounded-2xl text-cyan-500">
-                  <Calendar size={28} />
-                </div>
-                <div>
-                  <p className="text-sm text-foreground-muted font-medium">Total Today</p>
-                  <h3 className="text-3xl font-bold">{bookings.length}</h3>
-                </div>
-              </div>
-            </div>
-          </div>
+          <StatsOverview 
+            stats={stats} 
+            onAddWalkIn={() => setIsManualBookingOpen(true)}
+          />
         </div>
 
-        {/* Up Next List */}
-        <div className="glass-panel p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Up Next</h2>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" size={16} />
-              <input 
-                type="text" 
-                placeholder="Search ticket..." 
-                className="pl-9 pr-4 py-2 text-sm bg-background/50 border border-foreground/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
-              />
-            </div>
-          </div>
+        {/* Bottom Section: Full Queue */}
+        <QueueList 
+          waitingList={waitingList}
+          currentlyServingId={currentlyServing?.id}
+          onStart={handleStartServing}
+          onNoShow={(b) => setNoShowBooking(b)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
-          <div className="space-y-3">
-            <AnimatePresence>
-              {waitingList.length === 0 ? (
-                <motion.div 
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  className="py-8 text-center text-foreground-muted bg-foreground/5 rounded-xl border border-foreground/5 border-dashed"
-                >
-                  The waiting list is empty.
-                </motion.div>
-              ) : (
-                waitingList.map((booking, idx) => (
-                  <motion.div
-                    key={booking.id}
-                    layout // Animates position changes
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex items-center justify-between p-4 rounded-xl border border-foreground/5 bg-background/50 hover:bg-background transition-colors"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center font-bold text-lg text-foreground-muted">
-                        #{booking.tokenNumber}
-                      </div>
-                      <div>
-                        <p className="font-bold">#{booking.tokenNumber} - {booking.userName || 'Customer'}</p>
-                        <div className="flex items-center space-x-2">
-                          <p className="text-xs text-foreground-muted">{booking.isWaitlist ? 'Waitlisted' : 'Regular'}</p>
-                          {booking.showContactToVendor && booking.userPhone && (
-                            <>
-                              <span className="text-foreground-muted/30">•</span>
-                              <p className="text-xs text-cyan-500 font-medium">{booking.userPhone}</p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {idx === 0 && !currentlyServing && (
-                      <button 
-                        onClick={() => startServing(booking.id!)}
-                        className="text-sm font-medium text-cyan-600 hover:text-cyan-700 bg-cyan-500/10 hover:bg-cyan-500/20 py-2 px-4 rounded-lg transition-colors"
-                      >
-                        Call Now
-                      </button>
-                    )}
-                  </motion.div>
-                ))
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+        {/* Modals */}
+        <NoShowModal 
+          isOpen={!!noShowBooking}
+          onClose={() => setNoShowBooking(null)}
+          customerName={noShowBooking?.userName || 'Customer'}
+          tokenNumber={noShowBooking?.tokenNumber || 0}
+          onConfirm={(reason) => {
+            if (noShowBooking) {
+              handleNoShow(noShowBooking.id!, reason);
+              setNoShowBooking(null);
+            }
+          }}
+        />
+
+        <ManualBookingModal 
+          isOpen={isManualBookingOpen}
+          onClose={() => setIsManualBookingOpen(false)}
+          shopId={shop?.id || ''}
+          onSuccess={() => {}}
+        />
       </main>
     </div>
   );
