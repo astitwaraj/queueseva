@@ -39,6 +39,7 @@ export interface Booking {
   status: 'waiting' | 'serving' | 'completed' | 'cancelled';
   createdAt: Timestamp; // Firestore Timestamp
   isWaitlist: boolean;
+  waitlistNumber?: number; // 0 for confirmed, 1+ for waitlist
   userName?: string;
   userEmail?: string;
   userPhone?: string;

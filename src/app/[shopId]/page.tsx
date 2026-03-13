@@ -156,11 +156,13 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
 
     try {
       let slotId = dbSlots[selectedTime]?.id;
+      let assignedWaitlistNumber = 0;
       
       const { runTransaction } = await import('firebase/firestore');
 
       if (!slotId) {
         const { createSlot } = await import('@/lib/firebase/db');
+        assignedWaitlistNumber = isWaitlist ? 1 : 0;
         slotId = await createSlot(params.shopId, {
           startTime: selectedTime,
           date: selectedDate,
@@ -170,7 +172,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
       } else {
         const slotRef = doc(db, `shops/${params.shopId}/slots`, slotId);
         
-        await runTransaction(db, async (transaction) => {
+        assignedWaitlistNumber = await runTransaction(db, async (transaction) => {
           const slotDoc = await transaction.get(slotRef);
           if (!slotDoc.exists()) throw new Error("Slot not found");
           
@@ -182,10 +184,14 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
              throw new Error("Sorry, this slot just became full! Please click it again to join the waitlist.");
           }
 
+          const newWaitlistNumber = isWaitlist ? waitlistCount + 1 : 0;
+
           transaction.update(slotRef, {
             currentBookings: isWaitlist ? currentBookings : currentBookings + 1,
             waitlistCount: isWaitlist ? waitlistCount + 1 : waitlistCount
           });
+
+          return newWaitlistNumber;
         });
       }
 
@@ -199,10 +205,11 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
       const bookingId = await createBooking({
         userId: user.uid,
         shopId: params.shopId,
-        slotId: slotId, // Guaranteed to be a string here
+        slotId: slotId, 
         tokenNumber: tokenNumber,
         status: 'waiting',
         isWaitlist,
+        waitlistNumber: assignedWaitlistNumber,
         userName: profile?.displayName || user.displayName || 'Guest',
         userEmail: profile?.email || user.email || '',
         userPhone: profile?.phoneNumber || '',
@@ -399,8 +406,8 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
                     </p>
                     <p className="text-sm leading-relaxed text-foreground-muted">
                       {isSelectedFull 
-                        ? 'This slot is currently at max capacity. You can join the waitlist.' 
-                        : 'Great choice! This slot is available for immediate booking.'}
+                        ? 'This slot is currently at max capacity. You can join the waitlist for a chance to be served.' 
+                        : 'Great choice! This slot is available for an immediate confirmed booking.'}
                     </p>
                   </div>
 

@@ -157,9 +157,11 @@ export default function TicketView({ params }: { params: { bookingId: string } }
                   </>
                 ) : (
                   <>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse" />
-                    <span className="font-semibold text-lg text-foreground/80">
-                      {booking.isWaitlist ? 'On Waitlist' : 'Waiting in Queue'}
+                    <div className={`w-3 h-3 rounded-full animate-pulse ${booking.isWaitlist ? 'bg-yellow-500' : 'bg-emerald-500'}`} />
+                    <span className="font-semibold text-lg text-foreground/80 text-center">
+                      {booking.isWaitlist 
+                        ? (booking.waitlistNumber ? `Joined Waitlist #${booking.waitlistNumber}` : 'On Waitlist') 
+                        : 'Booking Confirmed'}
                     </span>
                   </>
                 )}

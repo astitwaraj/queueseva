@@ -33,7 +33,7 @@ export default function BookingCard({ booking, idx, onEdit, onDelete }: BookingC
           </div>
           <div>
             <h3 className="font-bold text-lg mb-1">{booking.shopData?.name || 'Unknown Shop'}</h3>
-            <div className="flex flex-wrap items-center text-sm text-foreground-muted gap-y-1">
+            <div className="flex flex-wrap items-center text-sm text-foreground-muted gap-y-2">
                <span className="bg-foreground/10 px-2 py-0.5 rounded text-xs text-foreground font-medium mr-2">Token #{booking.tokenNumber}</span>
                <div className="flex items-center mr-3">
                  <Calendar size={12} className="mr-1 text-cyan-500" />
@@ -43,11 +43,14 @@ export default function BookingCard({ booking, idx, onEdit, onDelete }: BookingC
                  <Clock size={12} className="mr-1 text-cyan-500" />
                  <span>{formatSlotTime(booking.slotData?.startTime || '')}</span>
                </div>
-               <span className={`capitalize font-medium ${
-                 booking.status === 'serving' ? 'text-cyan-500' : 
-                 booking.status === 'completed' ? 'text-green-500' : 'text-yellow-500'
+               <span className={`capitalize font-medium px-2 py-0.5 rounded-md ${
+                 booking.status === 'serving' ? 'bg-cyan-500/10 text-cyan-400' : 
+                 booking.status === 'completed' ? 'bg-green-500/10 text-green-400' : 
+                 booking.isWaitlist ? 'bg-yellow-500/10 text-yellow-400' : 'bg-emerald-500/10 text-emerald-400'
                }`}>
-                 {booking.status}
+                 {booking.status === 'waiting' 
+                   ? (booking.isWaitlist ? `WL #${booking.waitlistNumber}` : 'Confirmed') 
+                   : booking.status}
                </span>
             </div>
           </div>

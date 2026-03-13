@@ -52,7 +52,7 @@ export default function WaitlistAction({ waitlistCount, maxCapacity, onJoin, loa
           <Loader2 className="animate-spin" size={20} />
         ) : (
           <>
-            <span>Join Waitlist</span>
+            <span>Join Waitlist #{waitlistCount + 1}</span>
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </>
         )}
