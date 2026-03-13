@@ -73,7 +73,6 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
           {/* Right Side: Info Panel */}
           <div className="lg:col-span-4 space-y-6">
             <BookingSummaryCard 
-              shop={shop}
               selectedDate={selectedDate}
               selectedTime={selectedTime}
               selectedSlotData={selectedSlotData}

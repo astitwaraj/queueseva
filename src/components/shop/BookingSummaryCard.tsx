@@ -2,11 +2,10 @@
 
 import { Info, Calendar, Clock, ArrowLeft, Loader2, ChevronRight } from 'lucide-react';
 import WaitlistAction from '@/app/[shopId]/WaitlistAction';
-import { Shop, Slot } from '@/lib/firebase/db';
+import { Slot } from '@/lib/firebase/db';
 import { formatTime } from '@/lib/utils/slot-utils';
 
 interface BookingSummaryCardProps {
-  shop: Shop;
   selectedDate: string;
   selectedTime: string | null;
   selectedSlotData: Slot | null;
@@ -16,7 +15,6 @@ interface BookingSummaryCardProps {
 }
 
 export default function BookingSummaryCard({
-  shop,
   selectedDate,
   selectedTime,
   selectedSlotData,
@@ -79,7 +77,6 @@ export default function BookingSummaryCard({
             {displayAsFull ? (
               <WaitlistAction
                 waitlistCount={selectedSlotData?.waitlistCount || 0} 
-                maxCapacity={shop.maxCapacity}
                 onJoin={() => onConfirm(true)}
                 loading={bookingLoading}
               />
