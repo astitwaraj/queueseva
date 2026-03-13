@@ -8,7 +8,11 @@ import {
   serverTimestamp,
   Timestamp,
   doc,
-  getDoc
+  getDoc,
+  runTransaction,
+  increment,
+  setDoc,
+  DocumentReference
 } from "firebase/firestore";
 
 // --- Types ---
@@ -99,22 +103,103 @@ export const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt
   return docRef.id;
 };
 
-export const cancelBooking = async (bookingId: string, shopId: string, slotId: string, isWaitlist: boolean) => {
-  const { doc, deleteDoc, updateDoc, increment } = await import('firebase/firestore');
+export const cancelBooking = async (bookingId: string, shopId: string, slotId: string) => {
+  // 1. Pre-fetch potentially affected waitlisted bookings
+  // We do this outside the transaction because Web SDK doesn't support queries inside transactions.
+  // We'll re-verify them inside the transaction to ensure atomicity.
+  // Simplify the query to only use slotId to avoid needing a composite index.
+  // We filter and sort in memory since the number of bookings per slot is small.
+  const q = query(
+    collection(db, BOOKINGS_COL),
+    where("slotId", "==", slotId)
+  );
   
-  // Delete the booking doc
-  await deleteDoc(doc(db, BOOKINGS_COL, bookingId));
-  
-  // Update the slot counts
-  const slotRef = doc(db, `${SHOPS_COL}/${shopId}/slots`, slotId);
   try {
-    await updateDoc(slotRef, {
-      currentBookings: isWaitlist ? increment(0) : increment(-1),
-      waitlistCount: isWaitlist ? increment(-1) : increment(0)
+    const snapshot = await getDocs(q);
+    // Sort and filter in memory to find waitlisted bookings
+    const potentiallyAffectedRefs = snapshot.docs
+      .filter(d => {
+        const data = d.data();
+        return d.id !== bookingId && 
+               data.status === 'waiting' && 
+               data.isWaitlist === true;
+      })
+      .sort((a, b) => (a.data().waitlistNumber || 0) - (b.data().waitlistNumber || 0))
+      .map(d => d.ref);
+
+    await runTransaction(db, async (transaction) => {
+      const bookingRef = doc(db, BOOKINGS_COL, bookingId);
+      const bookingDoc = await transaction.get(bookingRef);
+      
+      if (!bookingDoc.exists()) return;
+
+      const bookingData = bookingDoc.data() as Booking;
+      const wasWaitlist = bookingData.isWaitlist;
+      const deletedWLNumber = bookingData.waitlistNumber || 0;
+
+      const slotRef = doc(db, `${SHOPS_COL}/${shopId}/slots`, slotId);
+      const slotSnap = await transaction.get(slotRef);
+      
+      if (!slotSnap.exists()) return;
+
+      // Re-read affected waitlisted bookings inside the transaction to ensure we have the latest state
+      const activeWaitlist: { ref: DocumentReference, data: Booking }[] = [];
+      for (const ref of potentiallyAffectedRefs) {
+        const snap = await transaction.get(ref);
+        if (snap.exists() && snap.data().status === 'waiting' && snap.data().isWaitlist) {
+          activeWaitlist.push({ ref, data: snap.data() as Booking });
+        }
+      }
+
+      // --- ALL WRITES START HERE ---
+      
+      // Delete the target booking
+      transaction.delete(bookingRef);
+
+      if (!wasWaitlist) {
+        // Case: A confirmed booking was deleted
+        if (activeWaitlist.length > 0) {
+          // Promote the first waitlisted person
+          const first = activeWaitlist[0];
+          transaction.update(first.ref, { 
+            isWaitlist: false, 
+            waitlistNumber: 0 
+          });
+
+          // Shift all other waitlisted persons up
+          for (let i = 1; i < activeWaitlist.length; i++) {
+            const b = activeWaitlist[i];
+            const currentWL = b.data.waitlistNumber || 0;
+            transaction.update(b.ref, { 
+              waitlistNumber: Math.max(1, currentWL - 1) 
+            });
+          }
+          
+          // Decrement waitlist count (currentBookings stays same since one was promoted)
+          transaction.update(slotRef, { waitlistCount: increment(-1) });
+        } else {
+          // No one on waitlist, just decrement confirmed count
+          transaction.update(slotRef, { currentBookings: increment(-1) });
+        }
+      } else {
+        // Case: A waitlisted booking was deleted
+        // Shift all subsequent waitlisted persons up
+        for (const b of activeWaitlist) {
+          const currentWL = b.data.waitlistNumber || 0;
+          if (currentWL > deletedWLNumber) {
+            transaction.update(b.ref, { 
+              waitlistNumber: Math.max(1, currentWL - 1) 
+            });
+          }
+        }
+        
+        // Decrement waitlist count
+        transaction.update(slotRef, { waitlistCount: increment(-1) });
+      }
     });
   } catch (error) {
-    console.error("Error updating slot counts during cancellation:", error);
-    // Even if slot update fails (e.g. slot doc deleted), we already deleted the booking
+    console.error("Error in cancelBooking transaction:", error);
+    throw error;
   }
 };
 
@@ -160,7 +245,6 @@ export const getUserProfile = async (userId: string) => {
 };
 
 export const updateUserProfile = async (userId: string, profileData: Partial<Omit<UserProfile, 'id' | 'updatedAt'>>) => {
-  const { setDoc, doc, serverTimestamp } = await import('firebase/firestore');
   const userRef = doc(db, USERS_COL, userId);
   await setDoc(userRef, {
     ...profileData,

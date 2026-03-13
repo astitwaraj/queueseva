@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -44,7 +46,7 @@ export function useCustomerBookings() {
   const handleCancel = async (booking: BookingWithDetails) => {
     setActionLoading(true);
     try {
-      await cancelBooking(booking.id!, booking.shopId, booking.slotId, booking.isWaitlist);
+      await cancelBooking(booking.id!, booking.shopId, booking.slotId);
       setBookings(prev => prev.filter(b => b.id !== booking.id));
       setBookingToDelete(null);
       setSelectedBooking(null);
@@ -59,7 +61,7 @@ export function useCustomerBookings() {
   const handleReschedule = async (booking: BookingWithDetails) => {
     setActionLoading(true);
     try {
-      await cancelBooking(booking.id!, booking.shopId, booking.slotId, booking.isWaitlist);
+      await cancelBooking(booking.id!, booking.shopId, booking.slotId);
       router.push(`/${booking.shopId}`);
     } catch (error) {
       console.error("Error starting reschedule:", error);

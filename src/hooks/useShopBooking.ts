@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, onSnapshot, runTransaction } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
-import { Shop, Slot, Booking, createBooking, getUserProfile } from '@/lib/firebase/db';
+import { Shop, Slot, Booking, createBooking, getUserProfile, createSlot } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
 import { generateDays, generateTokenNumber } from '@/lib/utils/slot-utils';
 
@@ -113,11 +113,8 @@ export function useShopBooking(shopId: string) {
     try {
       let slotId = dbSlots[selectedTime]?.id;
       let assignedWaitlistNumber = 0;
-      
-      const { runTransaction } = await import('firebase/firestore');
 
       if (!slotId) {
-        const { createSlot } = await import('@/lib/firebase/db');
         assignedWaitlistNumber = isWaitlist ? 1 : 0;
         slotId = await createSlot(shopId, {
           startTime: selectedTime,
@@ -151,13 +148,13 @@ export function useShopBooking(shopId: string) {
         });
       }
 
-      const tokenNumber = generateTokenNumber(user.uid, shopId, slotId);
+      const tokenNumber = generateTokenNumber(user.uid, shopId, slotId!);
       const profile = await getUserProfile(user.uid);
 
       const bookingId = await createBooking({
         userId: user.uid,
         shopId: shopId,
-        slotId: slotId, 
+        slotId: slotId!, 
         tokenNumber: tokenNumber,
         status: 'waiting',
         isWaitlist,
