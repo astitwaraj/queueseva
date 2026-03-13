@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { logoutUser } from '@/lib/firebase/auth';
 import { getShopByOwner, Booking, Shop } from '@/lib/firebase/db';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import { Play, LogOut, Loader2, ArrowRightCircle, Search, Calendar, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import VendorNavbar from '@/components/layout/VendorNavbar';
 
 export default function VendorDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -107,21 +107,7 @@ export default function VendorDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="glass sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-foreground/5">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center text-white font-bold">
-            {shop?.name?.charAt(0) || 'Q'}
-          </div>
-          <span className="font-bold text-lg tracking-tight">{shop?.name}</span>
-        </div>
-        <button 
-          onClick={() => { logoutUser(); router.push('/vendor/login'); }}
-          className="text-foreground-muted hover:text-red-500 transition-colors flex items-center space-x-2 text-sm font-medium"
-        >
-          <span>Logout</span>
-          <LogOut size={16} />
-        </button>
-      </nav>
+      <VendorNavbar shop={shop} onShopUpdate={(updatedShop) => setShop(updatedShop)} />
 
       <main className="max-w-7xl mx-auto p-6 md:p-8 space-y-8">
         {/* Bento Box Grid */}

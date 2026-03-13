@@ -12,6 +12,7 @@ import {
   runTransaction,
   increment,
   setDoc,
+  updateDoc,
   DocumentReference
 } from "firebase/firestore";
 
@@ -84,6 +85,11 @@ export const getShopByOwner = async (ownerId: string) => {
     return { id: doc.id, ...doc.data() } as Shop;
   }
   return null;
+};
+
+export const updateShop = async (shopId: string, shopData: Partial<Omit<Shop, 'id' | 'ownerId'>>) => {
+  const shopRef = doc(db, SHOPS_COL, shopId);
+  await updateDoc(shopRef, shopData);
 };
 
 export const checkShopNumberUnique = async (shopNumber: string) => {
