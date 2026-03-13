@@ -6,16 +6,13 @@ import {
   onSnapshot, 
   updateDoc, 
   doc, 
-  addDoc,
   serverTimestamp,
   getDocs,
   getDoc,
-  orderBy,
-  Timestamp,
   increment,
   runTransaction
 } from "firebase/firestore";
-import { Booking, Shop, Slot } from "@/lib/firebase/db";
+import { Booking, Slot } from "@/lib/firebase/db";
 
 const BOOKINGS_COL = "bookings";
 const SHOPS_COL = "shops";

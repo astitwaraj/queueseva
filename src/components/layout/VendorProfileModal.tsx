@@ -62,7 +62,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
     } finally {
       setLoading(false);
     }
-  }, [user]); // Removed shopData dependency to prevent re-fetching on save
+  }, [user, shopData]);
 
   useEffect(() => {
     if (isOpen && user) {
