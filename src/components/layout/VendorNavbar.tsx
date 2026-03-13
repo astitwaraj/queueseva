@@ -73,9 +73,9 @@ export default function VendorNavbar({ shop, onShopUpdate }: VendorNavbarProps) 
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-2 w-56 bg-[#1a1f2e] border border-white/10 shadow-2xl rounded-2xl overflow-hidden z-50"
+                  className="absolute right-0 mt-2 w-56 bg-card border border-border shadow-2xl rounded-2xl overflow-hidden z-50"
                 >
-                  <div className="p-4 border-b border-white/5 bg-white/5">
+                  <div className="p-4 border-b border-border bg-foreground/5">
                     <p className="text-xs font-bold text-foreground">Logged in as</p>
                     <p className="text-xs text-foreground-muted truncate mt-0.5">{user?.email}</p>
                   </div>
@@ -90,7 +90,7 @@ export default function VendorNavbar({ shop, onShopUpdate }: VendorNavbarProps) 
                       <Settings size={16} className="mr-3 text-foreground-muted group-hover:text-cyan-500 transition-colors" />
                       Settings
                     </button>
-                    <div className="h-px bg-white/5 my-1.5 mx-2" />
+                    <div className="h-px bg-border my-1.5 mx-2" />
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl hover:bg-red-500/10 hover:text-red-500 transition-all group text-foreground/80"

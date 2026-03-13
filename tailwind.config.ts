@@ -15,9 +15,14 @@ const config: Config = {
       },
       colors: {
         background: "var(--background)",
-        "background-card": "var(--background-card)",
         foreground: "var(--foreground)",
         "foreground-muted": "var(--foreground-muted)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
         glow: {
           cyan: "rgba(34, 211, 238, 0.4)",
           violet: "rgba(167, 139, 250, 0.4)"
@@ -27,6 +32,7 @@ const config: Config = {
         'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
         'glow-cyan': '0 0 20px rgba(34, 211, 238, 0.5)',
         'glow-violet': '0 0 20px rgba(167, 139, 250, 0.5)',
+        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
       },
       borderRadius: {
         '3xl': '1.5rem',

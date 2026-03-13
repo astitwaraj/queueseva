@@ -62,7 +62,7 @@ export default function ShopHeader({ shop }: ShopHeaderProps) {
         )}
       </div>
       
-      <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#1a1f2e] border border-white/10 rounded-xl text-xs text-foreground-muted">
+      <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl text-xs text-foreground-muted">
         <Info size={14} className="text-cyan-500" />
         <span>Select a date and time to secure your slot</span>
       </div>

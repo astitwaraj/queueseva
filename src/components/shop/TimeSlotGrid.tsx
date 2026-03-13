@@ -43,8 +43,8 @@ export default function TimeSlotGrid({
               className={`relative py-4 px-2 rounded-xl border text-sm font-bold transition-all text-center flex flex-col items-center justify-center min-h-[70px] ${
                 state === 'already_booked' ? 'border-red-500/30 bg-red-500/5 text-red-500/50 cursor-not-allowed opacity-60' :
                 isSelected ? (state === 'full' ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500 shadow-glow-yellow' : 'border-cyan-500 bg-cyan-500/10 text-cyan-500 shadow-glow-cyan') :
-                state === 'full' ? 'border-yellow-500/20 bg-[#1a1f2e] text-yellow-500/70 hover:border-yellow-500/50' :
-                'border-white/5 bg-[#1a1f2e] text-foreground/80 hover:border-white/20 hover:text-white'
+                state === 'full' ? 'border-yellow-500/20 bg-card text-yellow-500/70 hover:border-yellow-500/50' :
+                'border-border bg-card text-foreground hover:border-cyan-500/20'
               }`}
             >
               <span className="text-base">{formatTime(time).split(' ')[0]}</span>

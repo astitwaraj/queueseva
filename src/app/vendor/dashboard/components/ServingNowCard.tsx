@@ -61,7 +61,7 @@ export default function ServingNowCard({ currentlyServing, waitingList, onAdvanc
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
               <button 
                 onClick={() => onAdvance(currentlyServing.id!)}
-                className="flex-3 flex items-center space-x-3 bg-foreground text-background py-4 px-8 rounded-2xl font-semibold text-lg hover:shadow-glow-cyan transition-all hover:-translate-y-1 justify-center group/btn"
+                className="flex-3 flex items-center space-x-3 bg-cyan-600 text-white py-4 px-8 rounded-2xl font-semibold text-lg hover:bg-cyan-700 transition-all hover:-translate-y-1 justify-center group/btn shadow-xl shadow-cyan-600/20"
               >
                 <span>Next Customer</span>
                 <ArrowRightCircle className="group-hover/btn:translate-x-1 transition-transform" />

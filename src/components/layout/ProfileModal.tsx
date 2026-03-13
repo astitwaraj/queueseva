@@ -106,7 +106,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-md bg-[#1a1f2e] border border-white/10 shadow-2xl rounded-3xl overflow-hidden flex flex-col"
+          className="relative w-full max-w-md bg-card border border-border shadow-2xl rounded-3xl overflow-hidden flex flex-col"
         >
           {/* Header */}
           <div className="p-6 border-b border-foreground/5 flex items-center justify-between">
@@ -155,7 +155,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                       value={profile.displayName}
                       onChange={(e) => setProfile({ ...profile, displayName: e.target.value })}
                       placeholder="Enter your name"
-                      className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
+                      className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
                     />
                   </div>
 
@@ -192,7 +192,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         setProfile({ ...profile, phoneNumber: val });
                       }}
                       placeholder="+91XXXXXXXXXX"
-                      className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-mono font-medium"
+                      className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-mono font-medium"
                     />
                     <p className="text-[10px] text-foreground-muted/60 px-1">Must be a valid Indian number starting with +91</p>
                   </div>

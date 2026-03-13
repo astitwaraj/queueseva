@@ -79,7 +79,7 @@ export default function VendorOnboarding() {
       <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-violet-500/10 rounded-full blur-[100px]" />
       
-      <div className="w-full max-w-xl relative z-10 glass-panel p-6 md:p-10 overflow-visible shadow-2xl border border-white/10">
+      <div className="w-full max-w-xl relative z-10 bg-card p-6 md:p-10 overflow-visible shadow-2xl border border-border">
         <StepIndicator 
           currentStep={step} 
           totalSteps={3} 
@@ -119,7 +119,7 @@ export default function VendorOnboarding() {
         </AnimatePresence>
 
         {/* Support Text */}
-        <p className="mt-8 text-center text-xs text-foreground-muted font-medium opacity-50">
+        <p className="mt-8 text-center text-foreground-muted text-xs font-medium opacity-50">
           Need help? Contact support at <span className="text-cyan-500 cursor-pointer hover:underline">support@queueseva.com</span>
         </p>
       </div>

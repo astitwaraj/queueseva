@@ -53,7 +53,7 @@ export function ShopDetailsStep({ formData, updateField, onNext }: ShopDetailsSt
             type="text"
             value={formData.name}
             onChange={(e) => updateField('name', e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl border border-foreground/10 bg-black/40 text-foreground focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all text-base placeholder:text-foreground-muted/50"
+            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-input text-foreground focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all text-base placeholder:text-foreground-muted/50"
             placeholder="e.g. Apollo Hospital Clinic"
             autoFocus
           />
@@ -71,8 +71,8 @@ export function ShopDetailsStep({ formData, updateField, onNext }: ShopDetailsSt
               updateField('shopNumber', e.target.value);
               if (error) setError(null);
             }}
-            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all text-base placeholder:text-foreground-muted/50 bg-black/40 ${
-              error ? 'border-red-500 ring-2 ring-red-500/20' : 'border-foreground/10 focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none'
+            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all text-base placeholder:text-foreground-muted/50 bg-input ${
+              error ? 'border-red-500 ring-2 ring-red-500/20' : 'border-border focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none'
             }`}
             placeholder="e.g. 24 or Ground Floor"
           />
@@ -106,7 +106,7 @@ export function ShopDetailsStep({ formData, updateField, onNext }: ShopDetailsSt
         <button
           disabled={!isComplete || loading}
           onClick={handleNext}
-          className="flex items-center space-x-2 bg-foreground text-background py-3.5 px-8 rounded-xl font-bold hover:bg-foreground/90 transition-all disabled:opacity-50 disabled:grayscale group shadow-lg min-w-[140px] justify-center"
+          className="flex items-center space-x-2 bg-cyan-600 text-white py-3.5 px-8 rounded-xl font-bold hover:bg-cyan-700 transition-all disabled:opacity-50 disabled:grayscale group shadow-lg min-w-[140px] justify-center"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={18} />

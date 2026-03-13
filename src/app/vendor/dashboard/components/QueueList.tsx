@@ -34,7 +34,7 @@ export default function QueueList({
             placeholder="Search name, token..." 
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 text-sm bg-background/50 border border-foreground/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
+            className="w-full pl-9 pr-4 py-2.5 text-sm bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function QueueList({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, delay: idx * 0.05 }}
-                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border border-foreground/5 bg-background/40 hover:bg-background/80 hover:border-cyan-500/20 hover:shadow-xl hover:shadow-cyan-500/5 transition-all gap-4"
+                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border border-border bg-card/40 hover:bg-card/80 hover:border-cyan-500/20 hover:shadow-xl hover:shadow-cyan-500/5 transition-all gap-4"
               >
                 <div className="flex items-center space-x-5">
                   <div className="relative">
@@ -112,7 +112,7 @@ export default function QueueList({
                   {!currentlyServingId && idx === 0 && (
                     <button 
                       onClick={() => onStart(booking.id!)}
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-xs font-bold text-background bg-foreground hover:shadow-glow-cyan px-5 py-2.5 rounded-xl transition-all"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-700 px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-cyan-600/20"
                     >
                       <Play size={14} fill="currentColor" />
                       <span>Call Now</span>

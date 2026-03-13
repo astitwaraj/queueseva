@@ -124,7 +124,7 @@ export default function CustomerLanding() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-11 pr-4 py-3 border border-foreground/10 rounded-xl bg-[#1a1f2e] text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all shadow-glass group-hover:border-white/20 placeholder:text-gray-500 text-sm"
+                className="block w-full pl-11 pr-4 py-3 border border-border rounded-xl bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all shadow-glass group-hover:border-cyan-500/20 placeholder:text-foreground-muted text-sm"
                 placeholder="Hospital, salon, bank..."
               />
             </div>
@@ -132,13 +132,13 @@ export default function CustomerLanding() {
             <div className="relative min-w-[180px]" ref={sortRef}>
               <button
                 onClick={() => setIsSortOpen(!isSortOpen)}
-                className="w-full flex items-center justify-between px-4 py-3 bg-[#1a1f2e] border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium text-white shadow-inner group"
+                className="w-full flex items-center justify-between px-4 py-3 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium text-foreground shadow-sm group"
               >
                 <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="text-gray-500 group-hover:text-cyan-500 transition-colors" size={16} />
+                  <SlidersHorizontal className="text-foreground-muted group-hover:text-cyan-500 transition-colors" size={16} />
                   <span>{currentSortLabel}</span>
                 </div>
-                <ChevronDown className={`text-gray-500 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} size={16} />
+                <ChevronDown className={`text-foreground-muted transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} size={16} />
               </button>
 
               <AnimatePresence>
@@ -147,7 +147,7 @@ export default function CustomerLanding() {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 left-0 mt-2 p-1 bg-[#1a1f2e] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl"
+                    className="absolute right-0 left-0 mt-2 p-1 bg-card border border-border rounded-xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl"
                   >
                     {sortOptions.map((option) => (
                       <button
@@ -159,7 +159,7 @@ export default function CustomerLanding() {
                         className={`w-full flex items-center justify-between px-4 py-2.5 text-xs rounded-lg transition-all ${
                           sortBy === option.value 
                             ? 'bg-cyan-500/10 text-cyan-500' 
-                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            : 'text-foreground-muted hover:bg-foreground/5 hover:text-foreground'
                         }`}
                       >
                         <span>{option.label}</span>
@@ -196,7 +196,7 @@ export default function CustomerLanding() {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {paginatedShops.length === 0 ? (
-                <div className="col-span-1 md:col-span-2 text-center py-20 text-foreground-muted bg-[#1a1f2e]/20 rounded-3xl border border-white/10 border-dashed">
+                <div className="col-span-1 md:col-span-2 text-center py-20 text-foreground-muted bg-card/20 rounded-3xl border border-border border-dashed">
                   <Store size={48} className="mx-auto mb-4 opacity-30" />
                   <p>No locations found matching &quot;{searchQuery}&quot;</p>
                   {searchQuery && (
@@ -222,8 +222,8 @@ export default function CustomerLanding() {
                     
                     <div className="flex justify-between items-center relative z-10">
                       <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 rounded-2xl bg-[#1a1f2e] flex items-center justify-center text-white border border-white/10 group-hover:border-cyan-500/30 transition-colors">
-                          <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-br from-white to-gray-500">
+                        <div className="w-16 h-16 rounded-2xl bg-input flex items-center justify-center text-foreground border border-border group-hover:border-cyan-500/30 transition-colors">
+                          <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground-muted">
                             {shop.name.charAt(0)}
                           </span>
                         </div>
@@ -254,7 +254,7 @@ export default function CustomerLanding() {
                           </div>
                         </div>
                       </div>
-                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-black transition-all">
+                      <div className="w-10 h-10 rounded-full bg-foreground/5 border border-border flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-all">
                         {authLoading === shop.id ? (
                           <Loader2 className="animate-spin" size={18} />
                         ) : (
@@ -271,7 +271,7 @@ export default function CustomerLanding() {
               <div className="mt-12 text-center">
                 <button
                   onClick={loadMore}
-                  className="px-8 py-4 rounded-2xl bg-[#1a1f2e] border border-white/10 text-white font-bold hover:bg-white/5 transition-all shadow-xl flex items-center space-x-2 mx-auto"
+                  className="px-8 py-4 rounded-2xl bg-card border border-border text-foreground font-bold hover:bg-foreground/5 transition-all shadow-xl flex items-center space-x-2 mx-auto"
                 >
                   <Sparkles size={18} className="text-cyan-500" />
                   <span>Load More Vendors</span>

@@ -71,11 +71,11 @@ export default function ManualBookingModal({ isOpen, onClose, shopId, onSuccess 
         />
         
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-md bg-background border border-foreground/10 rounded-2xl shadow-2xl overflow-hidden"
-        >
+           initial={{ opacity: 0, scale: 0.9, y: 20 }}
+           animate={{ opacity: 1, scale: 1, y: 0 }}
+           exit={{ opacity: 0, scale: 0.9, y: 20 }}
+           className="relative w-full max-w-md bg-card border border-border shadow-2xl rounded-2xl overflow-hidden"
+         >
           <form onSubmit={handleSubmit} className="p-6">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2 text-cyan-500">
@@ -99,7 +99,7 @@ export default function ManualBookingModal({ isOpen, onClose, shopId, onSuccess 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. John Doe"
-                  className="w-full bg-foreground/5 border border-foreground/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
+                  className="w-full bg-input border border-border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
                 />
               </div>
 
@@ -132,13 +132,13 @@ export default function ManualBookingModal({ isOpen, onClose, shopId, onSuccess 
                     required
                     value={selectedSlotId}
                     onChange={(e) => setSelectedSlotId(e.target.value)}
-                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/30 appearance-none"
+                    className="w-full bg-input border border-border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/30 appearance-none"
                   >
                     {slots.length === 0 ? (
-                      <option value="">No slots available</option>
+                      <option value="" className="bg-card">No slots available</option>
                     ) : (
                       slots.map(slot => (
-                        <option key={slot.id} value={slot.id}>
+                        <option key={slot.id} value={slot.id} className="bg-card">
                           {slot.startTime} ({slot.currentBookings} booked)
                         </option>
                       ))

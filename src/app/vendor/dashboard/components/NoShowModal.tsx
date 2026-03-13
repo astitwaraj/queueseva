@@ -34,11 +34,11 @@ export default function NoShowModal({ isOpen, onClose, onConfirm, customerName, 
         />
         
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-md bg-background border border-foreground/10 rounded-2xl shadow-2xl overflow-hidden"
-        >
+           initial={{ opacity: 0, scale: 0.9, y: 20 }}
+           animate={{ opacity: 1, scale: 1, y: 0 }}
+           exit={{ opacity: 0, scale: 0.9, y: 20 }}
+           className="relative w-full max-w-md bg-card border border-border shadow-2xl rounded-2xl overflow-hidden"
+         >
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2 text-rose-500">
@@ -83,7 +83,7 @@ export default function NoShowModal({ isOpen, onClose, onConfirm, customerName, 
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="Additional details..."
-                  className="w-full bg-foreground/5 border border-foreground/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/30 min-h-[80px]"
+                  className="w-full bg-input border border-border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/30 min-h-[80px]"
                 />
               </div>
             </div>

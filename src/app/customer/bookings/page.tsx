@@ -97,7 +97,7 @@ export default function CustomerBookings() {
                 placeholder="Search by vendor name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-[#1a1f2e] border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-white placeholder:text-gray-500 shadow-inner font-medium"
+                className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-foreground placeholder:text-foreground-muted shadow-sm font-medium"
               />
             </div>
             
@@ -105,13 +105,13 @@ export default function CustomerBookings() {
               <div className="relative min-w-[200px]" ref={sortRef}>
                 <button
                   onClick={() => setIsSortOpen(!isSortOpen)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 bg-[#1a1f2e] border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium text-white shadow-inner group"
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium text-foreground shadow-sm group"
                 >
                   <div className="flex items-center gap-3">
-                    <SlidersHorizontal className="text-gray-500 group-hover:text-cyan-500 transition-colors" size={16} />
+                    <SlidersHorizontal className="text-foreground-muted group-hover:text-cyan-500 transition-colors" size={16} />
                     <span>{currentSortLabel}</span>
                   </div>
-                  <ChevronDown className={`text-gray-500 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} size={16} />
+                  <ChevronDown className={`text-foreground-muted transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} size={16} />
                 </button>
 
                 <AnimatePresence>
@@ -120,7 +120,7 @@ export default function CustomerBookings() {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 left-0 mt-2 p-1 bg-[#1a1f2e] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl"
+                      className="absolute right-0 left-0 mt-2 p-1 bg-card border border-border rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl"
                     >
                       {sortOptions.map((option) => (
                         <button
@@ -132,7 +132,7 @@ export default function CustomerBookings() {
                           className={`w-full flex items-center justify-between px-4 py-3 text-sm rounded-xl transition-all ${
                             sortBy === option.value 
                               ? 'bg-cyan-500/10 text-cyan-500' 
-                              : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                              : 'text-foreground-muted hover:bg-foreground/5 hover:text-foreground'
                           }`}
                         >
                           <span>{option.label}</span>

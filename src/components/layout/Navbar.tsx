@@ -65,10 +65,11 @@ export default function Navbar({ title = "Queue Seva", subtitle = "Customer" }: 
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-2 w-48 bg-[#1a1f2e] border border-white/10 shadow-2xl rounded-2xl overflow-hidden z-50"
-                >
-                  <div className="p-3 border-b border-foreground/5">
-                    <p className="text-xs font-semibold text-foreground-muted truncate">{user?.email}</p>
+                   className="absolute right-0 mt-2 w-56 bg-card border border-border shadow-2xl rounded-2xl overflow-hidden z-50"
+                 >
+                   <div className="p-4 border-b border-border bg-foreground/5">
+                    <p className="text-xs font-bold text-foreground">Logged in as</p>
+                    <p className="text-sm text-foreground-muted truncate">{user?.email}</p>
                   </div>
                   <div className="p-1">
                     <button

@@ -23,7 +23,7 @@ export default function BookingSummaryCard({
   onConfirm
 }: BookingSummaryCardProps) {
   return (
-    <div className="glass-panel p-6 border-white/5 bg-[#1a1f2e]/50 backdrop-blur-md sticky top-32">
+    <div className="glass-panel p-6 border-border bg-card/50 backdrop-blur-md sticky top-32">
       <h2 className="text-xl font-bold mb-4 flex items-center">
         <Info className="text-cyan-500 mr-2" size={20} />
         Booking Summary
@@ -35,7 +35,7 @@ export default function BookingSummaryCard({
             <Calendar size={18} className="text-foreground-muted" />
             <span className="text-sm font-medium">Date</span>
           </div>
-          <span className="text-sm font-bold text-white">
+          <span className="text-sm font-bold text-foreground">
             {new Date(selectedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
           </span>
         </div>
@@ -45,14 +45,14 @@ export default function BookingSummaryCard({
             <Clock size={18} className="text-foreground-muted" />
             <span className="text-sm font-medium">Time</span>
           </div>
-          <span className="text-sm font-bold text-white">
+          <span className="text-sm font-bold text-foreground">
             {selectedTime ? formatTime(selectedTime) : 'Not selected'}
           </span>
         </div>
       </div>
 
       {!selectedTime ? (
-        <div className="p-8 text-center border border-dashed border-white/10 rounded-2xl flex flex-col items-center">
+        <div className="p-8 text-center border border-dashed border-border rounded-2xl flex flex-col items-center">
           <div className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center mb-4">
             <ArrowLeft size={24} className="text-foreground-muted animate-pulse" />
           </div>
@@ -84,7 +84,7 @@ export default function BookingSummaryCard({
               <button
                 onClick={() => onConfirm(false)}
                 disabled={bookingLoading}
-                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black py-4 px-8 rounded-xl font-bold hover:shadow-glow-cyan transition-all disabled:opacity-70"
+                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-500 to-cyan-400 text-white py-4 px-8 rounded-xl font-bold hover:shadow-glow-cyan transition-all disabled:opacity-70"
               >
                 {bookingLoading ? <Loader2 className="animate-spin" size={20} /> : (
                   <>

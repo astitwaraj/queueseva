@@ -36,7 +36,7 @@ export function CapacityStep({ formData, updateField, onSubmit, onPrev, loading 
               className={`py-3 rounded-xl border text-center transition-all relative overflow-hidden ${
                 formData.slotDuration === dur 
                   ? 'border-violet-500 bg-violet-500/10 text-violet-600 shadow-[0_0_20px_rgba(167,139,250,0.2)] scale-105 z-10' 
-                  : 'border-foreground/10 bg-background-card hover:bg-foreground/5 text-foreground/60'
+                  : 'border-border bg-card hover:bg-foreground/5 text-foreground/60'
               }`}
             >
               <span className="text-lg font-black">{dur}</span>
@@ -70,7 +70,7 @@ export function CapacityStep({ formData, updateField, onSubmit, onPrev, loading 
           <button 
             type="button"
             onClick={() => updateField('maxCapacity', Math.max(1, formData.maxCapacity - 1))}
-            className="w-12 h-12 rounded-2xl border border-foreground/10 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all text-xl font-black shadow-sm"
+            className="w-12 h-12 rounded-2xl border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-all text-xl font-black shadow-sm"
           >
             -
           </button>
@@ -92,7 +92,7 @@ export function CapacityStep({ formData, updateField, onSubmit, onPrev, loading 
           <button 
             type="button"
             onClick={() => updateField('maxCapacity', formData.maxCapacity + 1)}
-            className="w-12 h-12 rounded-2xl border border-foreground/10 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all text-xl font-black shadow-sm"
+            className="w-12 h-12 rounded-2xl border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-all text-xl font-black shadow-sm"
           >
             +
           </button>

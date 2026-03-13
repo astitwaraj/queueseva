@@ -70,8 +70,8 @@ export function FormDropdown({
         <button
           type="button"
           onClick={toggleOpen}
-          className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-left bg-background-card ${
-            isOpen ? 'border-cyan-500 ring-2 ring-cyan-500/20' : 'border-foreground/10'
+          className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-left bg-input ${
+            isOpen ? 'border-cyan-500 ring-2 ring-cyan-500/20' : 'border-border'
           } ${(disabled || loading) ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
         >
           <div className="flex items-center space-x-3 overflow-hidden">
@@ -93,16 +93,16 @@ export function FormDropdown({
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 4, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute z-50 w-full mt-1 bg-background-card border border-foreground/10 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl"
+              className="absolute z-50 w-full mt-1 bg-card border border-border rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl"
             >
               {searchable && (
-                <div className="p-2 border-b border-foreground/5 sticky top-0 bg-background-card/95 backdrop-blur-md z-10">
+                <div className="p-2 border-b border-border sticky top-0 bg-card/95 backdrop-blur-md z-10">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" size={14} />
                     <input
                       ref={searchInputRef}
                       type="text"
-                      className="w-full bg-background border border-foreground/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500/30 outline-none text-foreground placeholder:text-foreground-muted shadow-sm"
+                      className="w-full bg-input border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500/30 outline-none text-foreground placeholder:text-foreground-muted shadow-sm"
                       placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}

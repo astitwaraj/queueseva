@@ -240,10 +240,10 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-2xl bg-[#1a1f2e] border border-white/10 shadow-2xl rounded-3xl overflow-hidden flex flex-col max-h-[90vh]"
+          className="relative w-full max-w-2xl bg-card border border-border shadow-2xl rounded-3xl overflow-hidden flex flex-col max-h-[90vh]"
         >
           {/* Header */}
-          <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
+          <div className="p-6 border-b border-border flex items-center justify-between bg-foreground/5">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-500 border border-cyan-500/20">
                 <Settings className="animate-spin-slow" size={20} />
@@ -253,13 +253,13 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                 <p className="text-xs text-foreground-muted">Manage your personal and business details</p>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+            <button onClick={onClose} className="p-2 hover:bg-foreground/10 rounded-full transition-colors">
               <X size={20} />
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="flex px-6 pt-4 border-b border-white/5 bg-white/5">
+          <div className="flex px-6 pt-4 border-b border-border bg-foreground/5">
             <button
               onClick={() => setActiveTab('personal')}
               className={`pb-4 px-4 text-sm font-bold transition-all relative ${
@@ -336,7 +336,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                           type="text"
                           value={profile.displayName}
                           onChange={(e) => setProfile({ ...profile, displayName: e.target.value })}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
+                          className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
                           placeholder="Your Name"
                         />
                       </div>
@@ -356,7 +356,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                             }
                             setProfile({ ...profile, phoneNumber: val });
                           }}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-mono font-medium placeholder:text-foreground-muted/30"
+                          className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-mono font-medium placeholder:text-foreground-muted/30"
                           placeholder="+91XXXXXXXXXX"
                         />
                       </div>
@@ -370,7 +370,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                         type="email"
                         value={profile.email}
                         disabled
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground-muted cursor-not-allowed opacity-50"
+                        className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground-muted cursor-not-allowed opacity-50"
                       />
                       <p className="text-[10px] text-foreground-muted/60 ml-1">Email cannot be changed.</p>
                     </div>
@@ -391,7 +391,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                           type="text"
                           value={shop.name}
                           onChange={(e) => setShop({ ...shop, name: e.target.value })}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
+                          className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
                           placeholder="e.g. Apollo Pharmacy"
                         />
                       </div>
@@ -404,7 +404,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                           type="text"
                           value={shop.shopNumber}
                           onChange={(e) => setShop({ ...shop, shopNumber: e.target.value })}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
+                          className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
                           placeholder="e.g. Shop 24"
                         />
                       </div>
@@ -428,7 +428,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                         type="text"
                         value={shop.address}
                         onChange={(e) => setShop({ ...shop, address: e.target.value })}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
+                        className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium placeholder:text-foreground-muted/30"
                         placeholder="Full Address"
                       />
                     </div>
@@ -466,7 +466,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                             type="text"
                             value={shop.zipCode}
                             onChange={(e) => setShop(prev => ({ ...prev, zipCode: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium"
+                            className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium"
                             maxLength={6}
                             placeholder="6-digit ZIP"
                           />
@@ -483,10 +483,10 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                         <select
                           value={shop.slotDuration}
                           onChange={(e) => setShop({ ...shop, slotDuration: parseInt(e.target.value) })}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium appearance-none"
+                          className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium appearance-none"
                         >
                           {SLOT_DURATIONS.map(d => (
-                            <option key={d} value={d} className="bg-[#1a1f2e]">{d} Minutes</option>
+                            <option key={d} value={d} className="bg-card">{d} Minutes</option>
                           ))}
                         </select>
                       </div>
@@ -500,7 +500,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                           min="1"
                           value={shop.maxCapacity}
                           onChange={(e) => setShop({ ...shop, maxCapacity: parseInt(e.target.value) })}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
+                          className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
                         />
                       </div>
                     </div>
@@ -512,7 +512,7 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
 
           {/* Footer */}
           {!loading && (
-            <div className="p-6 border-t border-white/10 bg-white/5">
+            <div className="p-6 border-t border-border bg-foreground/5">
               <button
                 onClick={activeTab === 'personal' ? handleSavePersonal : handleSaveShop}
                 disabled={saving}

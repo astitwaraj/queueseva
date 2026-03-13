@@ -31,7 +31,7 @@ export default function DayPicker({ days, selectedDate, onSelectDate }: DayPicke
             className={`flex-shrink-0 w-24 flex flex-col items-center py-4 rounded-2xl border transition-all snap-start ${
               selectedDate === d.dateStr
                 ? 'border-cyan-500 bg-cyan-500/10 text-cyan-500 shadow-glow-cyan'
-                : 'border-white/5 bg-[#1a1f2e] hover:border-white/20 text-foreground'
+                : 'border-border bg-card hover:border-cyan-500/20 text-foreground'
             }`}
           >
             <span className="text-[10px] font-bold uppercase mb-1 opacity-60">{d.dayName}</span>
