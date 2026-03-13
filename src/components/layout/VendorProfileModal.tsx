@@ -129,8 +129,28 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
         phoneNumber: profile.phoneNumber,
         showContactToVendor: false // Vendors don't need this for themselves usually
       });
+
+      // Also sync to Shop if it exists
+      if (shopData?.id) {
+        await updateShop(shopData.id, {
+          ownerName: profile.displayName,
+          phoneNumber: profile.phoneNumber
+        });
+        
+        if (onShopUpdate) {
+          onShopUpdate({
+            ...shopData,
+            ownerName: profile.displayName,
+            phoneNumber: profile.phoneNumber
+          });
+        }
+      }
+
       setSuccess("Personal details updated successfully!");
-      setTimeout(() => setSuccess(null), 3000);
+      setTimeout(() => {
+        setSuccess(null);
+        onClose();
+      }, 800);
     } catch (err) {
       console.error("Error saving profile:", err);
       setError("Failed to save profile. Please try again.");
@@ -162,6 +182,8 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
         zipCode: shop.zipCode || '',
         slotDuration: shop.slotDuration || 30,
         maxCapacity: shop.maxCapacity || 1,
+        ownerName: profile.displayName || shopData.ownerName || '',
+        phoneNumber: profile.phoneNumber || shopData.phoneNumber || '',
       } as Shop;
       
       // Check if shop number is unique if it has been changed
@@ -184,10 +206,15 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
         zipCode: updatedShopData.zipCode,
         slotDuration: updatedShopData.slotDuration,
         maxCapacity: updatedShopData.maxCapacity,
+        ownerName: updatedShopData.ownerName,
+        phoneNumber: updatedShopData.phoneNumber,
       });
       onShopUpdate(updatedShopData);
       setSuccess("Shop details updated successfully!");
-      setTimeout(() => setSuccess(null), 3000);
+      setTimeout(() => {
+        setSuccess(null);
+        onClose();
+      }, 800);
     } catch (err) {
       console.error("Error saving shop:", err);
       setError("Failed to save shop details. Please try again.");
@@ -409,18 +436,6 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-end">
                       <div className="col-span-2 md:col-span-1">
                         <FormDropdown
-                          label="City"
-                          options={cities}
-                          value={shop.city || ''}
-                          onChange={(city) => setShop({ ...shop, city })}
-                          icon={<Building size={16} />}
-                          placeholder={shop.state ? "Select City" : "Select State..."}
-                          disabled={!shop.state}
-                          loading={loadingCities}
-                        />
-                      </div>
-                      <div className="col-span-2 md:col-span-1">
-                        <FormDropdown
                           label="State"
                           options={INDIAN_STATES}
                           value={shop.state || ''}
@@ -429,18 +444,33 @@ export default function VendorProfileModal({ isOpen, onClose, shopData, onShopUp
                           placeholder="State"
                         />
                       </div>
-                      <div className="space-y-1.5 flex flex-col">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-foreground-muted ml-1 flex items-center">
-                          <MapPin size={12} className="mr-1" />
-                          Zip Code
-                        </label>
-                        <input
-                          type="text"
-                          value={shop.zipCode}
-                          onChange={(e) => setShop({ ...shop, zipCode: e.target.value })}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium"
-                          maxLength={6}
+                      <div className="col-span-2 md:col-span-1">
+                        <FormDropdown
+                          label="City"
+                          options={cities}
+                          value={shop.city || ''}
+                          onChange={(city) => setShop(prev => ({ ...prev, city }))}
+                          icon={<Building size={16} />}
+                          placeholder={shop.state ? "Select City" : "Select State..."}
+                          disabled={!shop.state}
+                          loading={loadingCities}
                         />
+                      </div>
+                      <div className="col-span-2 md:col-span-1">
+                        <div className="space-y-1.5 flex flex-col">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-foreground-muted ml-1 flex items-center">
+                            <MapPin size={12} className="mr-1" />
+                            Zip Code
+                          </label>
+                          <input
+                            type="text"
+                            value={shop.zipCode}
+                            onChange={(e) => setShop(prev => ({ ...prev, zipCode: e.target.value }))}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-sm font-medium"
+                            maxLength={6}
+                            placeholder="6-digit ZIP"
+                          />
+                        </div>
                       </div>
                     </div>
 

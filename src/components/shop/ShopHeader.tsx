@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Clock, Info, MapPin } from 'lucide-react';
+import { ArrowLeft, Clock, Info, MapPin, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Shop } from '@/lib/firebase/db';
 
@@ -40,6 +40,15 @@ export default function ShopHeader({ shop }: ShopHeaderProps) {
               <Clock size={12} className="mr-1.5 text-cyan-500" />
               {shop.slotDuration} min / session
             </span>
+            {shop.phoneNumber && (
+              <>
+                <div className="h-4 w-px bg-foreground/10" />
+                <span className="flex items-center text-cyan-500 text-[11px] font-bold uppercase tracking-wider">
+                  <Phone size={12} className="mr-1.5" />
+                  {shop.phoneNumber}
+                </span>
+              </>
+            )}
           </div>
         </div>
 

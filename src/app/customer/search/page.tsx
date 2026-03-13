@@ -7,7 +7,7 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { Shop } from '@/lib/firebase/db';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Loader2, Store, ChevronRight, ArrowLeft, SlidersHorizontal, ChevronDown, Check, Sparkles } from 'lucide-react';
+import { Search, Loader2, Store, ChevronRight, ArrowLeft, SlidersHorizontal, ChevronDown, Check, Sparkles, Phone } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import { useShopFilters, ShopSortOption } from '@/hooks/useShopFilters';
 import { useRef } from 'react';
@@ -244,6 +244,12 @@ export default function CustomerLanding() {
                               <p className="text-[10px] text-foreground-muted line-clamp-1">
                                 {shop.address}, {shop.city}
                               </p>
+                            )}
+                            {shop.phoneNumber && (
+                              <div className="flex items-center text-[10px] text-cyan-500 font-medium">
+                                <Phone size={10} className="mr-1" />
+                                {shop.phoneNumber}
+                              </div>
                             )}
                           </div>
                         </div>

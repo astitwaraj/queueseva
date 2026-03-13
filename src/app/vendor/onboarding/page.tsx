@@ -54,6 +54,8 @@ export default function VendorOnboarding() {
         slotDuration: formData.slotDuration,
         maxCapacity: formData.maxCapacity,
         avgCancellationRate: 0,
+        ownerName: user.displayName || '',
+        phoneNumber: user.phoneNumber || '',
       });
       router.push('/vendor/dashboard');
     } catch (error) {

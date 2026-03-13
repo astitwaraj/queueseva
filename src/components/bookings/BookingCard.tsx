@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Store, Edit3, Trash2, Ticket, Calendar, Clock } from 'lucide-react';
+import { Store, Edit3, Trash2, Ticket, Calendar, Clock, Phone } from 'lucide-react';
 import { Booking, Shop, Slot } from '@/lib/firebase/db';
 import { useRouter } from 'next/navigation';
 import { formatSlotDate, formatSlotTime } from '@/lib/utils/formatters';
@@ -43,6 +43,13 @@ export default function BookingCard({ booking, idx, onEdit, onDelete }: BookingC
                  <Clock size={12} className="mr-1 text-cyan-500" />
                  <span>{formatSlotTime(booking.slotData?.startTime || '')}</span>
                </div>
+                {booking.shopData?.phoneNumber && (
+                   <div className="flex items-center text-cyan-400 font-medium">
+                     <Phone size={12} className="mr-1" />
+                     <span>{booking.shopData.phoneNumber}</span>
+                   </div>
+                )}
+                <div className="flex-grow md:w-0" />
                <span className={`capitalize font-medium px-2 py-0.5 rounded-md ${
                  booking.status === 'serving' ? 'bg-cyan-500/10 text-cyan-400' : 
                  booking.status === 'completed' ? 'bg-green-500/10 text-green-400' : 

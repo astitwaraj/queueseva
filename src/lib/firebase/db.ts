@@ -30,6 +30,8 @@ export interface Shop {
   state: string;
   zipCode: string;
   shopNumber: string;
+  phoneNumber?: string;
+  ownerName?: string;
 }
 
 export interface Slot {
