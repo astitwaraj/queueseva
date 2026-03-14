@@ -11,6 +11,7 @@ import { Search, Loader2, Store, ChevronRight, ArrowLeft, SlidersHorizontal, Che
 import Navbar from '@/components/layout/Navbar';
 import { useShopFilters, ShopSortOption } from '@/hooks/useShopFilters';
 import { useRef } from 'react';
+import SearchSkeleton from '@/components/shop/SearchSkeleton';
 
 export default function CustomerLanding() {
   const router = useRouter();
@@ -184,9 +185,7 @@ export default function CustomerLanding() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin text-cyan-500" size={40} />
-          </div>
+          <SearchSkeleton />
         ) : (
           <>
             <motion.div 

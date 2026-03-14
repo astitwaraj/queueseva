@@ -1,8 +1,10 @@
 'use client';
 
-import { Loader2, ArrowLeft } from 'lucide-react';
+import {ArrowLeft, Search, SlidersHorizontal, ChevronDown, Check } from 'lucide-react';
 import { useCustomerBookings } from '@/hooks/useCustomerBookings';
 import Navbar from '@/components/layout/Navbar';
+import { Skeleton } from '@/components/ui/Skeleton';
+import BookingsSkeleton from '@/components/bookings/BookingsSkeleton';
 
 // Extracted Components
 import BookingCard from '@/components/bookings/BookingCard';
@@ -10,7 +12,6 @@ import ManageBookingModal from '@/components/bookings/ManageBookingModal';
 import DeleteBookingModal from '@/components/bookings/DeleteBookingModal';
 import EmptyBookings from '@/components/bookings/EmptyBookings';
 import { useBookingFilters, SortOption } from '@/hooks/useBookingFilters';
-import { Search, SlidersHorizontal, ChevronDown, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 
@@ -61,8 +62,16 @@ export default function CustomerBookings() {
 
   if (loading || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-cyan-500" size={32} />
+      <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+        <Navbar subtitle="Bookings" />
+        <main className="max-w-7xl mx-auto px-6 py-8 relative z-10 w-full flex-grow">
+          <div className="mb-12">
+            <Skeleton className="h-4 w-32 mb-4" />
+            <Skeleton className="h-10 w-64 mb-2" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+          <BookingsSkeleton />
+        </main>
       </div>
     );
   }

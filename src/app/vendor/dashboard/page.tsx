@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
 import VendorNavbar from '@/components/layout/VendorNavbar';
 import { useVendorDashboard, EnhancedBooking } from './hooks/useVendorDashboard';
+import VendorDashboardLoading from './loading';
 import ServingNowCard from './components/ServingNowCard';
 import StatsOverview from './components/StatsOverview';
 import QueueList from './components/QueueList';
@@ -29,14 +29,7 @@ export default function VendorDashboard() {
   const [isManualBookingOpen, setIsManualBookingOpen] = useState(false);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="animate-spin text-cyan-500" size={48} />
-          <p className="text-foreground-muted font-medium animate-pulse">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <VendorDashboardLoading />;
   }
 
   return (

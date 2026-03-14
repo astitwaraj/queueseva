@@ -12,6 +12,8 @@ import DayPicker from '@/components/shop/DayPicker';
 import TimeSlotGrid from '@/components/shop/TimeSlotGrid';
 import BookingSummaryCard from '@/components/shop/BookingSummaryCard';
 
+import ShopBookingSkeleton from '@/components/shop/ShopBookingSkeleton';
+
 export default function ShopBookingView({ params }: { params: { shopId: string } }) {
   const {
     shop,
@@ -32,11 +34,7 @@ export default function ShopBookingView({ params }: { params: { shopId: string }
   } = useShopBooking(params.shopId);
 
   if (loading || authLoading || !shop) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-cyan-500" size={32} />
-      </div>
-    );
+    return <ShopBookingSkeleton />;
   }
 
   const generatedTimeSlots = generateTimeSlots(shop.slotDuration);
