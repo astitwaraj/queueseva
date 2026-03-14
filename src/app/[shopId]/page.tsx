@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
+
 import { useShopBooking } from '@/hooks/useShopBooking';
 import { generateTimeSlots } from '@/lib/utils/slot-utils';
 import Navbar from '@/components/layout/Navbar';
